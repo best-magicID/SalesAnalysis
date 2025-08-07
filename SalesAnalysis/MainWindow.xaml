@@ -4,9 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SalesAnalysis"
+        
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Анализ продаж" 
+        Height="450" 
+        Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="ForControls"
+               TargetType="Button">
+            <Setter Property="Margin"
+                    Value="105" />
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="5">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--Левая часть-->
+        <StackPanel>
+            <TextBlock Text="Выбор модели"/>
+        </StackPanel>
+        
+        <DataGrid Grid.Row="1">
+            
+        </DataGrid>
+        
+        <!--Разделитель-->
+        <GridSplitter Grid.Column="1" 
+                      Grid.RowSpan="3"
+                      Width="5" 
+                      HorizontalAlignment="Stretch"/>
+
+        <!--Правая часть-->
+        <StackPanel Grid.Column="2">
+            <TextBlock Text="Выбор модели"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  Grid.Column="2">
+
+        </DataGrid>
+
+        <StackPanel Grid.Column="2"
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            
+            <Button Content="Кнопка"/>
+            
+        </StackPanel>
 
     </Grid>
 </Window>

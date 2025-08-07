@@ -6,6 +6,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <StartupObject>SalesAnalysis.App</StartupObject>
+    <ApplicationIcon>Image\icon1.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Image\icon1.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Image\icon1.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Image\icon1.ico" />
+  </ItemGroup>
 
 </Project>
