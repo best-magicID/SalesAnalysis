@@ -9,6 +9,6 @@ namespace SalesAnalysis
     /// </summary>
     public partial class App : Application
     {
+        
     }
-
 }

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:SalesAnalysis"
         
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainWindow}"
         Title="Анализ продаж" 
         Height="450" 
         Width="800"
@@ -38,7 +39,18 @@
             <TextBlock Text="Выбор модели"/>
         </StackPanel>
         
-        <DataGrid Grid.Row="1">
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding ListModels}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  AutoGenerateColumns="False">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Модель" 
+                                    Binding="{Binding Path=NameModel}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+            </DataGrid.Columns>
             
         </DataGrid>
         
