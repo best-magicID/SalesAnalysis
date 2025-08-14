@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SalesAnalysis.Classes
 {
+    /// <summary>
+    /// Описание класса Дата продаж
+    /// </summary>
     internal class DateSale : INotifyPropertyChanged
     {
         #region ПОЛЯ И СВОЙСТВА
 
+        /// <summary>
+        /// Id даты продажи
+        /// </summary>
         [Key]
         public int IdDateSale
         {
@@ -25,6 +26,9 @@ namespace SalesAnalysis.Classes
         }
         private int _IdDateSale;
 
+        /// <summary>
+        /// Дата продажи модели 
+        /// </summary>
         public DateTime DateSaleModel
         {
             get => _DateSaleModel;
@@ -36,6 +40,9 @@ namespace SalesAnalysis.Classes
         }
         private DateTime _DateSaleModel;
 
+        /// <summary>
+        /// Id модели
+        /// </summary>
         public int IdModel
         {
             get => _IdModel;
@@ -47,6 +54,9 @@ namespace SalesAnalysis.Classes
         }
         private int _IdModel;
 
+        /// <summary>
+        /// Количество проданных моделей 
+        /// </summary>
         public int CountSoldModels
         {
             get => _CountSoldModels;

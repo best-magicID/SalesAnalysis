@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace SalesAnalysis.Classes
 {
+    /// <summary>
+    /// Общие методы 
+    /// </summary>
     public abstract class GeneralMethods
     {
+        /// <summary>
+        /// Отображение уведомления в MessageBox
+        /// </summary>
+        /// <param name="text"></param>
         public static void ShowNotificationMessageBox(string text)
         {
             MessageBox.Show(text, 

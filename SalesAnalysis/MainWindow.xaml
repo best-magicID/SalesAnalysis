@@ -9,7 +9,7 @@
         d:DataContext="{d:DesignInstance Type=local:MainWindow}"
         Title="Анализ продаж" 
         Height="450" 
-        Width="800"
+        Width="1100"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -24,7 +24,7 @@
     <Grid Margin="5">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.15*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -36,6 +36,10 @@
 
         <!--Левая часть-->
         <StackPanel>
+            <Button x:Name="ButtonAddModel" 
+                    Content="Добавить модель"
+                    Click="ButtonAddModel_Click"/>
+            
             <TextBlock Text="Выбор модели"/>
         </StackPanel>
         
@@ -61,12 +65,171 @@
                       HorizontalAlignment="Stretch"/>
 
         <!--Правая часть-->
-        <StackPanel Grid.Column="2">
-            <TextBlock Text="Выбор модели"/>
+        <StackPanel Grid.Column="2" 
+                    Orientation="Horizontal">
+            <TextBlock Text="Все модели"
+                       VerticalAlignment="Bottom"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1"
-                  Grid.Column="2">
+                  Grid.Column="2"
+                  ItemsSource="{Binding ListSalesModels}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№ " 
+                                    Binding="{Binding Path=IdModel}"
+                                    Width="Auto" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Название модели" 
+                                    Binding="{Binding Path=NameModel}"
+                                    Width="Auto" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridTextColumn Header="Январь" 
+                                    Binding="{Binding Path=TotalCostForJanuary}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridTextColumn Header="Февраль" 
+                                    Binding="{Binding Path=TotalCostForFebruary}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridTextColumn Header="Март" 
+                                    Binding="{Binding Path=TotalCostForMarch}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Апрель" 
+                                    Binding="{Binding Path=TotalCostForApril}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Май" 
+                                    Binding="{Binding Path=TotalCostForMay}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Июнь" 
+                                    Binding="{Binding Path=TotalCostForJune}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Июль" 
+                                    Binding="{Binding Path=TotalCostForJuly}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Август" 
+                                    Binding="{Binding Path=TotalCostForAugust}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Сентябрь" 
+                                    Binding="{Binding Path=TotalCostForSeptember}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Октябрь" 
+                                    Binding="{Binding Path=TotalCostForOctober}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Ноябрь" 
+                                    Binding="{Binding Path=TotalCostForNovember}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Декабрь" 
+                                    Binding="{Binding Path=TotalCostForDecember}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Год" 
+                                    Binding="{Binding Path=TotalCostForYear}"
+                                    Width="*" 
+                                    IsReadOnly="True"/>
+
+            </DataGrid.Columns>
+
+            <!--Тестовое доп поле-->
+            <!--<DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid HeadersVisibility="None"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              
+                              HorizontalAlignment="Right"
+                              ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=ListSalesModels}">
+                        
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Январь" 
+                    Binding="{Binding ListSaleForJanuary.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Февраль" 
+                    Binding="{Binding Path=ListSaleForFebruary.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Март" 
+                    Binding="{Binding Path=ListSaleForMarch.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Апрель" 
+                    Binding="{Binding Path=ListSaleForApril.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Май" 
+                    Binding="{Binding Path=ListSaleForMay.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Июнь" 
+                    Binding="{Binding Path=ListSaleForJune.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Июль" 
+                    Binding="{Binding Path=ListSaleForJuly.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Август" 
+                    Binding="{Binding Path=ListSaleForAugust.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Сентябрь" 
+                    Binding="{Binding Path=ListSaleForSeptember.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Октябрь" 
+                    Binding="{Binding Path=ListSaleForOctober.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Ноябрь" 
+                    Binding="{Binding Path=ListSaleForNovember.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+
+                            <DataGridTextColumn Header="Декабрь" 
+                    Binding="{Binding Path=ListSaleForDecember.Count}"
+                    Width="*" 
+                    IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>-->
 
         </DataGrid>
 

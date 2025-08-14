@@ -1,31 +1,51 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace SalesAnalysis.Classes
 {
+    /// <summary>
+    /// Датаконтекст БД
+    /// </summary>
     class MyDbContext : DbContext
     {
         public DbSet<Model> Models { get; set; } = null!;
 
-        public DbSet<DateSale> DateSale { get; set; } = null!;
+        public DbSet<DateSale> DatesSale { get; set; } = null!;
 
-        // Конфигурация подключения (для консольного приложения)
+        public DbSet<Month> Months { get; set; } = null!;
+
+
+        //public MyDbContext(DbContextOptions<MyDbContext> options) 
+        //    : base(options)
+        //{
+        //    //Database.EnsureCreated();
+        //}
+
+        // Конфигурация подключения
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString =
-                    "Server=(localdb)\\MSSQLLocalDB;" +
-                    "Database=BdForSalesAnalysis;" +
-                    "Trusted_Connection=True;" +
-                    "MultipleActiveResultSets=true";
+                var builder = new ConfigurationBuilder();
+
+                builder.SetBasePath(Directory.GetCurrentDirectory());
+
+                builder.AddJsonFile("appsettings.json");
+                // создаем конфигурацию
+                var config = builder.Build();
+                // получаем строку подключения
+                var connectionString = config.GetConnectionString("DefaultConnection");
+
+                //string connectionString =
+                //    "Server=(localdb)\\MSSQLLocalDB;" +
+                //    "Database=BdForSalesAnalysis;" +
+                //    "Trusted_Connection=True;" +
+                //    "MultipleActiveResultSets=true";
 
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
+
     }
 }
