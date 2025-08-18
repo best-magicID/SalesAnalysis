@@ -64,6 +64,13 @@ namespace SalesAnalysis.Classes
 
         }
 
+        public Model(string newNameModel,
+                     double newPriceModel)
+        {
+            NameModel = newNameModel;
+            PriceModel = newPriceModel;
+        }
+
         public Model(int newIdModel,
                      string newNameModel,
                      double newPriceModel)

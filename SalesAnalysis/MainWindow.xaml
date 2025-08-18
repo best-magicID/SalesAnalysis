@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SalesAnalysis"
+        xmlns:conv="clr-namespace:SalesAnalysis.Converters"
         
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow}"
@@ -17,6 +18,14 @@
                TargetType="Button">
             <Setter Property="Margin"
                     Value="105" />
+        </Style>
+        
+        <conv:ValueToBrushConverter x:Key="ValueToBrushConverter"/>
+        
+        <Style x:Key="CellStyle" 
+               TargetType="DataGridCell">
+            <Setter Property="Background" 
+                    Value="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ValueToBrushConverter}}" />
         </Style>
 
     </Window.Resources>
@@ -47,7 +56,8 @@
                   ItemsSource="{Binding ListModels}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
-                  AutoGenerateColumns="False">
+                  AutoGenerateColumns="False"
+                  SelectedItem="{Binding SelectedModel}">
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Модель" 
@@ -66,9 +76,28 @@
 
         <!--Правая часть-->
         <StackPanel Grid.Column="2" 
-                    Orientation="Horizontal">
-            <TextBlock Text="Все модели"
+                    Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Год "
+                           VerticalAlignment="Center"/>
+                <ComboBox x:Name="ComboBoxForYear"
+                          ItemsSource="{Binding ListYears}"
+                          SelectedItem="{Binding SelectedYear}"/>
+                <Button x:Name="ButtonShowAllModels" 
+                        Content="Показать все модели"
+                        Margin="20 0 0 0"
+                        Click="ButtonShowAllModels_Click">
+                    
+                </Button>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Продажи по месяцам за "
                        VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="{Binding SelectedYear}"
+                       VerticalAlignment="Bottom"/>
+            </StackPanel>
         </StackPanel>
 
         <DataGrid Grid.Row="1"
@@ -76,7 +105,9 @@
                   ItemsSource="{Binding ListSalesModels}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
-                  AutoGenerateColumns="False">
+                  AutoGenerateColumns="False"
+                  CanUserSortColumns="False"
+                  >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="№ " 
                                     Binding="{Binding Path=IdModel}"
@@ -92,12 +123,20 @@
                                     Binding="{Binding Path=TotalCostForJanuary}"
                                     Width="*" 
                                     IsReadOnly="True"/>
-                
+
                 <DataGridTextColumn Header="Февраль" 
                                     Binding="{Binding Path=TotalCostForFebruary}"
                                     Width="*" 
-                                    IsReadOnly="True"/>
-                
+                                    IsReadOnly="True" >
+                    <!--<DataGridTextColumn.CellStyle>
+                        <Style>
+                            <Setter Property="Control.Background" 
+                                    Value="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ValueToBrushConverter}}" />
+
+                        </Style>
+                    </DataGridTextColumn.CellStyle>-->
+                </DataGridTextColumn>
+
                 <DataGridTextColumn Header="Март" 
                                     Binding="{Binding Path=TotalCostForMarch}"
                                     Width="*" 
@@ -155,6 +194,8 @@
 
             </DataGrid.Columns>
 
+            
+            
             <!--Тестовое доп поле-->
             <!--<DataGrid.RowDetailsTemplate>
                 <DataTemplate>
@@ -233,14 +274,14 @@
 
         </DataGrid>
 
-        <StackPanel Grid.Column="2"
+        <!--<StackPanel Grid.Column="2"
                     Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             
             <Button Content="Кнопка"/>
             
-        </StackPanel>
+        </StackPanel>-->
 
     </Grid>
 </Window>

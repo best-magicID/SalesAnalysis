@@ -1,34 +1,25 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
 using SalesAnalysis.Classes;
+using SalesAnalysis.Windows;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
 using System.IO;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static Azure.Core.HttpHeader;
 using General = SalesAnalysis.Classes.GeneralMethods;
 
 
 namespace SalesAnalysis
 {
+    public delegate void LoadDataFromBD();
+
     /// <summary>
     /// Главное окно
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -47,7 +38,61 @@ namespace SalesAnalysis
         /// </summary>
         public List<Month> ListMonths { get; set; } = [];
 
+        /// <summary>
+        /// Лист проданных моделей, на основе его отображается основная таблица с моделями
+        /// </summary>
         public ObservableCollection<SalesModel> ListSalesModels { get; set; } = [];
+
+        /// <summary>
+        /// Список лет за которые продавались модели
+        /// </summary>
+        public ObservableCollection<int> ListYears { get; set; } = [];
+
+        /// <summary>
+        /// Выбранный год за который показать список моделей
+        /// </summary>
+        public int SelectedYear
+        {
+            get => _SelectedYear;
+            set
+            {
+                _SelectedYear = value;
+                OnPropertyChanged();
+                if (SelectedModel == null)
+                {
+                    UpdateDataInTableForAllModels?.Invoke();
+                }
+                else
+                {
+                    UpdateDataInTableForSelectedModel?.Invoke();
+                }
+            }
+        }
+        private int _SelectedYear { get; set; } = DateTime.Now.Year;
+
+        /// <summary>
+        /// Загрузка данных из БД для всех моделей 
+        /// </summary>
+        public LoadDataFromBD? UpdateDataInTableForAllModels;
+
+        /// <summary>
+        /// Загрузка данных из БД для конкретной модели
+        /// </summary>
+        public LoadDataFromBD? UpdateDataInTableForSelectedModel;
+
+        /// <summary>
+        /// Выбранная модель
+        /// </summary>
+        public Model? SelectedModel
+        {
+            get => _SelectedModel;
+            set
+            {
+                _SelectedModel = value;
+                UpdateDataInTableForSelectedModel?.Invoke();
+            }
+        }
+        private Model? _SelectedModel;
 
         #endregion
 
@@ -59,14 +104,22 @@ namespace SalesAnalysis
             InitializeComponent();
 
             //CreateDbContextOptions();
-            //CheckConnect();
+            if (CheckConnect())
+            {
+                GetMonthsFromBd();
 
-            GetMonthsFromBd();
-            GetModelsFromBd();
+                UpdateDataInTableForAllModels += GetModelsFromBd;
+                GetListYearsFromBd();
 
-            GetDatesSalesModelsFromDb();
+                UpdateDataInTableForAllModels += GetDatesSalesModelsFromDb;
 
-            Convert();
+                UpdateDataInTableForAllModels += ConvertDataFromBD;
+
+                UpdateDataInTableForAllModels.Invoke();
+
+                UpdateDataInTableForSelectedModel += GetDatesSalesModelsFromDb;
+                UpdateDataInTableForSelectedModel += ConvertDataFromBD;
+            }
 
             DataContext = this;
         }
@@ -75,6 +128,16 @@ namespace SalesAnalysis
 
 
         #region МЕТОДЫ
+
+        #region ОБНОВЛЕНИЕ UI
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
 
         /// <summary>
         /// Не используется, есть в MyDbContext
@@ -101,47 +164,59 @@ namespace SalesAnalysis
         /// Проверка соединения с БД
         /// </summary>
         /// <returns></returns>
-        async Task CheckConnect()
+        public bool CheckConnect()
         {
+            bool isConnect = false;
             string connectionString =
                     "Server=(localdb)\\MSSQLLocalDB;" +
                     "Database=BdForSalesAnalysis;" +
                     "Trusted_Connection=True;" +
                     "MultipleActiveResultSets=true";
 
+            //using (MyDbContext db = new MyDbContext())
+            //{
+            //    var asdf = db.Database.GetDbConnection();
+            //}
             SqlConnection connection = new SqlConnection(connectionString);
             try
             {
-                await connection.OpenAsync();
-                General.ShowNotificationMessageBox("Подключение открыто");
+                connection.OpenAsync();
+                //General.ShowNotificationMessageBox("Есть доступ к БД");
+                isConnect = true;
             }
             catch (SqlException ex)
             {
-                General.ShowNotificationMessageBox(ex.Message);
+                General.ShowNotificationMessageBox("Нет доступа к БД. Ошибка: " + ex.Message);
+                isConnect = false;
             }
             finally
             {
                 if (connection.State == ConnectionState.Open)
                 {
-                    await connection.CloseAsync();
-                    General.ShowNotificationMessageBox("Подключение закрыто...");
+                    connection.CloseAsync();
                 }
             }
+            return isConnect;
         }
 
         /// <summary>
-        /// Добавдение новой модели в БД
+        /// Добавление новой модели в БД
         /// </summary>
         /// <param name="name"></param>
         /// <param name="price"></param>
-        public void AddModelInBd(string name, double price)
+        public void AddModelInBd(string? name = "", string? price = "")
         {
-            using MyDbContext db = new MyDbContext();
+            WindowForAddNewModel windowForAddNewModel = new();
+            windowForAddNewModel.ShowDialog();
 
-            db.Models.Add(new Model(newIdModel: -1,
-                                    newNameModel: name,
-                                    newPriceModel: price));
-            db.SaveChanges();
+            if (windowForAddNewModel.IsSave)
+            {
+                using MyDbContext db = new MyDbContext();
+
+                db.Models.Add(new Model(newNameModel: windowForAddNewModel.NameModel,
+                                        newPriceModel: (double.TryParse(windowForAddNewModel.PriceModel, out double priceModel) ? priceModel : 0)));
+                db.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -149,13 +224,21 @@ namespace SalesAnalysis
         /// </summary>
         public void GetModelsFromBd()
         {
-            using (MyDbContext db = new MyDbContext())
+            using (MyDbContext db = new ())
             {
                 ListModels.Clear();
 
-                var models = db.Models.ToList();
+                List<Model> listModel = [];
+                if(SelectedModel != null)
+                {
+                    listModel = db.Models.Where(x => x.IdModel == SelectedModel.IdModel).ToList();
+                }
+                else
+                {
+                    listModel = db.Models.ToList();
+                }
 
-                foreach (Model model in models)
+                foreach (Model model in listModel)
                 {
                     ListModels.Add(new Model(newIdModel: model.IdModel,
                                              newNameModel: model.NameModel,
@@ -186,6 +269,30 @@ namespace SalesAnalysis
             }
         }
 
+        /// <summary>
+        /// Получить список лет, за которые продавались модели
+        /// </summary>
+        public void GetListYearsFromBd()
+        {
+            using (MyDbContext db = new())
+            {
+                ListYears.Clear();
+
+                var years = db.DatesSale.Select(x => x.DateSaleModel).ToList(); ;
+
+                foreach (var year in years)
+                {
+                    if(!ListYears.Any(x => x == year.Year))
+                    {
+                        ListYears.Add(year.Year);
+                    }
+                }
+                if(ListYears.Count > 0)
+                {
+                    SelectedYear = ListYears.FirstOrDefault();
+                }
+            }
+        }
 
         /// <summary>
         /// Кнопка добавления новой модели
@@ -194,7 +301,7 @@ namespace SalesAnalysis
         /// <param name="e"></param>
         private void ButtonAddModel_Click(object sender, RoutedEventArgs e)
         {
-            AddModelInBd("Новая модель", 600);
+            AddModelInBd();
             GetModelsFromBd();
         }
 
@@ -203,36 +310,58 @@ namespace SalesAnalysis
         /// </summary>
         public void GetDatesSalesModelsFromDb()
         {
-            using (MyDbContext db = new MyDbContext())
-            {
-                var data = (from tModels in db.Models
-                           join tDatesSale in db.DatesSale on tModels.IdModel equals tDatesSale.IdModel
-                           select new { tModels.IdModel,
-                                        tModels.NameModel,
-                                        tModels.PriceModel,
-                                        tDatesSale.IdDateSale,
-                                        tDatesSale.DateSaleModel,
-                                        tDatesSale.CountSoldModels }).ToList();
+            using MyDbContext db = new MyDbContext();
 
-                int i = 1;
+            var data = (from tModels in (SelectedModel != null ? db.Models.Where(x => x.IdModel == SelectedModel.IdModel) : db.Models)
+                        join tDatesSale in db.DatesSale on tModels.IdModel equals tDatesSale.IdModel
+                        where tDatesSale.DateSaleModel.Year == SelectedYear
+                        select new
+                        {
+                            tModels.IdModel,
+                            tModels.NameModel,
+                            tModels.PriceModel,
+                            tDatesSale.IdDateSale,
+                            tDatesSale.DateSaleModel,
+                            tDatesSale.CountSoldModels
+                        }).ToList();
+
+            ListAllDatesSalesModels.Clear();
+            int i = 1;
+            if (data.Count > 0)
+            {
                 foreach (var item in data)
                 {
-                    ListAllDatesSalesModels.Add(new (newIndexNumber: i++,
-                                                     newIdModel: item.IdModel,
-                                                     newNameModel: item.NameModel,
-                                                     newPriceModel: item.PriceModel,
-                                                     newIdDateSale: item.IdDateSale,
-                                                     newDateSaleModel: item.DateSaleModel,
-                                                     newCountSoldModels: item.CountSoldModels));
+                    ListAllDatesSalesModels.Add(new(newIndexNumber: i++,
+                                                    newIdModel: item.IdModel,
+                                                    newNameModel: item.NameModel,
+                                                    newPriceModel: item.PriceModel,
+                                                    newIdDateSale: item.IdDateSale,
+                                                    newDateSaleModel: item.DateSaleModel,
+                                                    newCountSoldModels: item.CountSoldModels));
                 }
             }
         }
 
-        public void Convert ()
+        /// <summary>
+        /// Конвертация данных полученных из БД в объекты
+        /// </summary>
+        public void ConvertDataFromBD()
         {
+            ListSalesModels.Clear();
+
             foreach (Model model in ListModels)
-            { 
-                ListSalesModels.Add(new SalesModel(model));
+            {
+                if (SelectedModel == null)
+                {
+                    ListSalesModels.Add(new SalesModel(model));
+                }
+                else
+                {
+                    if(SelectedModel.IdModel == model.IdModel)
+                    {
+                        ListSalesModels.Add(new SalesModel(model));
+                    }
+                }
             }
 
             foreach (SalesModel salesModel in ListSalesModels)
@@ -242,73 +371,26 @@ namespace SalesAnalysis
                     var numberMonth = dateSalesModel.DateSaleModel.Month;
 
                     SalesByMonth salesByMonth = new SalesByMonth(newIdModel: dateSalesModel.IdModel,
-                                                                newNameModel: dateSalesModel.NameModel,
-                                                                newPriceModel: dateSalesModel.PriceModel,
-                                                                newMonth: ListMonths.Single(month => month.IdMonth == numberMonth),
-                                                                newDateSalesModels: dateSalesModel);
+                                                                 newNameModel: dateSalesModel.NameModel,
+                                                                 newPriceModel: dateSalesModel.PriceModel,
+                                                                 newMonth: ListMonths.Single(month => month.IdMonth == numberMonth),
+                                                                 newDateSalesModels: dateSalesModel);
 
                     if (salesModel.IdModel == dateSalesModel.IdModel)
                     {
                         AddInListDateSaleAndCalculatingSums(numberMonth, salesModel, salesByMonth, dateSalesModel);
-
-                        //switch (numberMonth)
-                        //{
-                        //    case 1:
-                                
-                        //        salesModel.ListSaleForJanuary.Add(salesByMonth);
-                        //        salesModel.TotalCostForJanuary = salesModel.TotalCostForJanuary + (dateSalesModel.CostAllModelsSold);
-                        //        break;
-                        //    case 2:
-                        //        salesModel.ListSaleForFebruary.Add(salesByMonth);
-                        //        salesModel.TotalCostForFebruary = salesModel.ListSaleForFebruary.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 3:
-                        //        salesModel.ListSaleForMarch.Add(salesByMonth);
-                        //        salesModel.TotalCostForMarch = salesModel.ListSaleForMarch.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 4:
-                        //        salesModel.ListSaleForApril.Add(salesByMonth);
-                        //        salesModel.TotalCostForApril = salesModel.ListSaleForApril.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 5:
-                        //        salesModel.ListSaleForMay.Add(salesByMonth);
-                        //        salesModel.TotalCostForMay = salesModel.ListSaleForMay.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 6:
-                        //        salesModel.ListSaleForJune.Add(salesByMonth);
-                        //        salesModel.TotalCostForJune = salesModel.ListSaleForJune.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 7:
-                        //        salesModel.ListSaleForJuly.Add(salesByMonth);
-                        //        salesModel.TotalCostForJuly = salesModel.ListSaleForJuly.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 8:
-                        //        salesModel.ListSaleForAugust.Add(salesByMonth);
-                        //        salesModel.TotalCostForAugust = salesModel.ListSaleForAugust.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 9:
-                        //        salesModel.ListSaleForSeptember.Add(salesByMonth);
-                        //        salesModel.TotalCostForSeptember = salesModel.ListSaleForSeptember.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 10:
-                        //        salesModel.ListSaleForOctober.Add(salesByMonth);
-                        //        salesModel.TotalCostForOctober = salesModel.ListSaleForOctober.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 11:
-                        //        salesModel.ListSaleForNovember.Add(salesByMonth);
-                        //        salesModel.TotalCostForNovember = salesModel.ListSaleForNovember.Count * salesModel.PriceModel;
-                        //        break;
-                        //    case 12:
-                        //        salesModel.ListSaleForDecember.Add(salesByMonth);
-                        //        salesModel.TotalCostForDecember = salesModel.ListSaleForDecember.Count * salesModel.PriceModel;
-                        //        break;
-                        //}
                     }
-
                 }
             }
         }
 
+        /// <summary>
+        /// Добавление в лист дат продаж и подсчет годовой суммы
+        /// </summary>
+        /// <param name="numberMonth"></param>
+        /// <param name="salesModel"></param>
+        /// <param name="salesByMonth"></param>
+        /// <param name="dateSalesModel"></param>
         public void AddInListDateSaleAndCalculatingSums(int numberMonth, SalesModel salesModel, SalesByMonth salesByMonth, DateSalesModel dateSalesModel)
         {
             switch (numberMonth)
@@ -376,8 +458,18 @@ namespace SalesAnalysis
                                           salesModel.TotalCostForOctober +
                                           salesModel.TotalCostForNovember +
                                           salesModel.TotalCostForDecember;
+        }
 
+        /// <summary>
+        /// Показать все модели
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonShowAllModels_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedModel = null;
 
+            UpdateDataInTableForAllModels?.Invoke();
         }
 
         #endregion

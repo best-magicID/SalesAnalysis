@@ -72,7 +72,7 @@ namespace SalesAnalysis.Classes
 
         #region ОБНОВЛЕНИЕ UI
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
