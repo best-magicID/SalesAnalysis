@@ -7,7 +7,7 @@ namespace SalesAnalysis.Classes
     /// <summary>
     /// Описание класса Дата продаж
     /// </summary>
-    internal class DateSale : INotifyPropertyChanged
+    public class DateSale : INotifyPropertyChanged
     {
         #region ПОЛЯ И СВОЙСТВА
 

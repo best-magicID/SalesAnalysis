@@ -90,5 +90,10 @@ namespace SalesAnalysis.Classes
 
         #endregion
 
+        public string GetNameModel()
+        {
+            return NameModel;
+        }
+
     }
 }

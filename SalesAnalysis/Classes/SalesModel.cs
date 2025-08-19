@@ -43,7 +43,15 @@ namespace SalesAnalysis.Classes
         public double TotalCostForDecember { get; set; }
         public ObservableCollection<SalesByMonth> ListSaleForDecember { get; set; } = [];
 
+        /// <summary>
+        /// Общее стоимость продаж за год
+        /// </summary>
         public double TotalCostForYear { get; set; }
+
+        /// <summary>
+        /// Общее кол-во продаж за год
+        /// </summary>
+        public int TotalAmountForYear { get; set; }
 
 
         public SalesModel(Model model)

@@ -86,15 +86,21 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Год "
                            VerticalAlignment="Center"/>
+                
                 <ComboBox x:Name="ComboBoxForYear"
                           ItemsSource="{Binding ListYears}"
                           SelectedItem="{Binding SelectedYear}"/>
+                
                 <Button x:Name="ButtonShowAllModels" 
                         Content="Показать все модели"
                         Margin="20 0 0 0"
-                        Click="ButtonShowAllModels_Click">
-                    
-                </Button>
+                        Click="ButtonShowAllModels_Click"/>
+
+                <Button x:Name="ButtonSaveToExcel" 
+                        Content="Сохранить данные в Excel"
+                        Margin="10 0 0 0"
+                        Click="ButtonSaveToExcel_Click"/>
+
             </StackPanel>
             
             <StackPanel Orientation="Horizontal"

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace SalesAnalysis.Classes
 {
@@ -22,10 +17,6 @@ namespace SalesAnalysis.Classes
         /// </summary>
         public ObservableCollection<DateSalesModel> ListDateSalesModels { get; set; } = [];
 
-        ///// <summary>
-        ///// Сумма продаж за месяц
-        ///// </summary>
-        //public double MonthlyAmount { get; set; }
 
         public SalesByMonth(int newIdModel,
                             string newNameModel,
@@ -42,22 +33,20 @@ namespace SalesAnalysis.Classes
                             string newNameModel,
                             double newPriceModel,
                             Month newMonth,
-                            ObservableCollection<DateSalesModel> newListDateSalesModels/*,double newMonthlyAmount*/)
+                            ObservableCollection<DateSalesModel> newListDateSalesModels)
             : base(newIdModel, newNameModel, newPriceModel)
         {
             Month = newMonth;
             ListDateSalesModels = newListDateSalesModels;
-            //MonthlyAmount = newMonthlyAmount;
         }
 
         public SalesByMonth(DateSalesModel dateSalesModel,
                             Month newMonth,
-                            ObservableCollection<DateSalesModel> newListDateSalesModels/*, double newMonthlyAmount*/)
+                            ObservableCollection<DateSalesModel> newListDateSalesModels)
             : base(dateSalesModel.IdModel, dateSalesModel.NameModel, dateSalesModel.PriceModel)
         {
             Month = newMonth;
             ListDateSalesModels = newListDateSalesModels;
-            //MonthlyAmount = newMonthlyAmount;
         }
     }
 }
