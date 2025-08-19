@@ -39,8 +39,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--Левая часть-->
@@ -48,11 +48,17 @@
             <Button x:Name="ButtonAddModel" 
                     Content="Добавить модель"
                     Click="ButtonAddModel_Click"/>
-            
-            <TextBlock Text="Выбор модели"/>
+
+            <Button x:Name="ButtonDeleteModel" 
+                    Content="Удалить модель"
+                    Click="ButtonDeleteModel_Click"/>
+
         </StackPanel>
-        
-        <DataGrid Grid.Row="1"
+
+        <TextBlock Text="Выбор модели"
+                   Grid.Row="1"/>
+
+        <DataGrid Grid.Row="2"
                   ItemsSource="{Binding ListModels}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -91,7 +97,8 @@
                 </Button>
             </StackPanel>
             
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        >
                 <TextBlock Text="Продажи по месяцам за "
                        VerticalAlignment="Bottom"/>
 
@@ -102,6 +109,7 @@
 
         <DataGrid Grid.Row="1"
                   Grid.Column="2"
+                  Grid.RowSpan="2"
                   ItemsSource="{Binding ListSalesModels}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"

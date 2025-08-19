@@ -89,13 +89,16 @@ namespace SalesAnalysis
             set
             {
                 _SelectedModel = value;
-                UpdateDataInTableForSelectedModel?.Invoke();
+
+                if (SelectedModel != null)
+                {
+                    UpdateDataInTableForSelectedModel?.Invoke();
+                }
             }
         }
         private Model? _SelectedModel;
 
         #endregion
-
 
         #region Конструктор
 
@@ -161,10 +164,10 @@ namespace SalesAnalysis
 
 
         /// <summary>
-        /// Проверка соединения с БД
+        /// Старая Проверка соединения с БД
         /// </summary>
         /// <returns></returns>
-        public bool CheckConnect()
+        public bool OldCheckConnect()
         {
             bool isConnect = false;
             string connectionString =
@@ -173,10 +176,10 @@ namespace SalesAnalysis
                     "Trusted_Connection=True;" +
                     "MultipleActiveResultSets=true";
 
-            //using (MyDbContext db = new MyDbContext())
-            //{
-            //    var asdf = db.Database.GetDbConnection();
-            //}
+            using (MyDbContext db = new MyDbContext())
+            {
+                var asdf = db.Database.CanConnect();
+            }
             SqlConnection connection = new SqlConnection(connectionString);
             try
             {
@@ -186,7 +189,7 @@ namespace SalesAnalysis
             }
             catch (SqlException ex)
             {
-                General.ShowNotificationMessageBox("Нет доступа к БД. Ошибка: " + ex.Message);
+                General.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
                 isConnect = false;
             }
             finally
@@ -195,6 +198,26 @@ namespace SalesAnalysis
                 {
                     connection.CloseAsync();
                 }
+            }
+            return isConnect;
+        }
+
+        /// <summary>
+        /// Проверка соединения с БД
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckConnect()
+        {
+            bool isConnect = false;
+            try
+            {
+                using MyDbContext db = new();
+
+                isConnect = db.Database.CanConnect();
+            }
+            catch (Exception ex)
+            {
+                General.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
             }
             return isConnect;
         }
@@ -215,6 +238,17 @@ namespace SalesAnalysis
 
                 db.Models.Add(new Model(newNameModel: windowForAddNewModel.NameModel,
                                         newPriceModel: (double.TryParse(windowForAddNewModel.PriceModel, out double priceModel) ? priceModel : 0)));
+                db.SaveChanges();
+            }
+        }
+
+        public void DeleteModelInBd(string text, Model idModel)
+        {
+            if (General.ShowSelectionWindow(text) == MessageBoxResult.Yes)
+            {
+                using MyDbContext db = new MyDbContext();
+
+                db.Models.Remove(idModel);
                 db.SaveChanges();
             }
         }
@@ -474,5 +508,21 @@ namespace SalesAnalysis
 
         #endregion
 
+        /// <summary>
+        /// Удаление модели
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonDeleteModel_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedModel != null)
+            {
+                string text = "Удалить: " + SelectedModel.NameModel;
+                DeleteModelInBd(text, SelectedModel);
+
+                SelectedModel = null;
+                UpdateDataInTableForAllModels?.Invoke();
+            }
+        }
     }
 }

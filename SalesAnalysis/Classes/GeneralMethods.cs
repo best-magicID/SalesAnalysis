@@ -11,12 +11,27 @@ namespace SalesAnalysis.Classes
         /// Отображение уведомления в MessageBox
         /// </summary>
         /// <param name="text"></param>
-        public static void ShowNotificationMessageBox(string text)
+        public static void ShowNotification(string text)
         {
             MessageBox.Show(text, 
                             "Внимание", 
                             MessageBoxButton.OK, 
                             MessageBoxImage.Information);
+        }
+        
+        /// <summary>
+        /// Открыть окно выбора
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static MessageBoxResult ShowSelectionWindow(string text)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show(text,
+                                                                "Внимание",
+                                                                MessageBoxButton.YesNo,
+                                                                MessageBoxImage.Information, 
+                                                                MessageBoxResult.No);
+            return messageBoxResult;
         }
     }
 }

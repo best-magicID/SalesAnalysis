@@ -9,6 +9,11 @@ namespace SalesAnalysis.Windows
     /// </summary>
     public partial class WindowForAddNewModel : Window, INotifyPropertyChanged
     {
+        #region ПОЛЯ И СВОЙСТВА
+
+        /// <summary>
+        /// Название модели
+        /// </summary>
         public string NameModel
         {
             get => _NameModel;
@@ -20,6 +25,9 @@ namespace SalesAnalysis.Windows
         }
         private string _NameModel = string.Empty;
 
+        /// <summary>
+        /// Цена модели
+        /// </summary>
         public string PriceModel 
         { 
             get => _PriceModel; 
@@ -31,7 +39,14 @@ namespace SalesAnalysis.Windows
         }
         public string _PriceModel = string.Empty;
 
+        /// <summary>
+        /// Флаг, сохранение данных
+        /// </summary>
         public bool IsSave { get; set; } = false;
+
+        #endregion
+
+        #region Конструктор
 
         public WindowForAddNewModel()
         {
@@ -49,6 +64,10 @@ namespace SalesAnalysis.Windows
             DataContext = this;
         }
 
+        #endregion
+
+        #region МЕТОДЫ
+
         private void ButtonForSaveModel_Click(object sender, RoutedEventArgs e)
         {
             IsSave = true;
@@ -63,6 +82,8 @@ namespace SalesAnalysis.Windows
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #endregion
 
         #endregion
     }
