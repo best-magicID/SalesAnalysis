@@ -1,0 +1,5 @@
+SELECT TOP (1000) [IdDateSale]
+      ,[DateSaleModel]
+      ,[IdModel]
+      ,[CountSoldModels]
+  FROM [BdForSalesAnalysis].[dbo].[DatesSale]

@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using General = SalesAnalysis.Classes.GeneralMethods;
@@ -249,6 +250,11 @@ namespace SalesAnalysis
             }
         }
 
+        /// <summary>
+        /// Удалить модель из БД
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="idModel"></param>
         public void DeleteModelInBd(string text, Model idModel)
         {
             if (General.ShowSelectionWindow(text) == MessageBoxResult.Yes)
@@ -392,7 +398,7 @@ namespace SalesAnalysis
 
             foreach (Model model in ListModels)
             {
-                if (SelectedModel == null)
+                if (SelectedModel == null) // Добавление всех моделей в список
                 {
                     ListSalesModels.Add(new SalesModel(model));
                 }
@@ -409,16 +415,16 @@ namespace SalesAnalysis
             {
                 foreach (DateSalesModel dateSalesModel in ListAllDatesSalesModels)
                 {
-                    var numberMonth = dateSalesModel.DateSaleModel.Month;
-
-                    SalesByMonth salesByMonth = new SalesByMonth(newIdModel: dateSalesModel.IdModel,
-                                                                 newNameModel: dateSalesModel.NameModel,
-                                                                 newPriceModel: dateSalesModel.PriceModel,
-                                                                 newMonth: ListMonths.Single(month => month.IdMonth == numberMonth),
-                                                                 newDateSalesModels: dateSalesModel);
-
                     if (salesModel.IdModel == dateSalesModel.IdModel)
                     {
+                        var numberMonth = dateSalesModel.DateSaleModel.Month;
+
+                        SalesByMonth salesByMonth = new SalesByMonth(newIdModel: dateSalesModel.IdModel,
+                                                                     newNameModel: dateSalesModel.NameModel,
+                                                                     newPriceModel: dateSalesModel.PriceModel,
+                                                                     newMonth: ListMonths.Single(month => month.IdMonth == numberMonth),
+                                                                     newDateSalesModels: dateSalesModel);
+
                         AddInListDateSaleAndCalculatingSums(numberMonth, salesModel, salesByMonth, dateSalesModel);
                     }
                 }
@@ -525,7 +531,6 @@ namespace SalesAnalysis
             UpdateDataInTableForAllModels?.Invoke();
         }
 
-        #endregion
 
         /// <summary>
         /// Удаление модели
@@ -544,11 +549,19 @@ namespace SalesAnalysis
             }
         }
 
+        /// <summary>
+        /// Кнопка для сохранения таблицы в Excel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonSaveToExcel_Click(object sender, RoutedEventArgs e)
         {
             SaveToExcel1();
         }
 
+        /// <summary>
+        /// Сохранение таблицы в Excel
+        /// </summary>
         public void SaveToExcel1()
         {
             try
@@ -559,7 +572,12 @@ namespace SalesAnalysis
                 saveFileDialog.Filter = "Excel.xlsx|*.xlsx";
                 saveFileDialog.RestoreDirectory = true;
                 saveFileDialog.FileName = nameFile;
-                saveFileDialog.ShowDialog();
+                bool? result = saveFileDialog.ShowDialog();
+
+                if(result == null || result == false)
+                {
+                    return;
+                }
 
                 using (SpreadsheetDocument document = SpreadsheetDocument.Create(saveFileDialog.FileName, SpreadsheetDocumentType.Workbook))
                 {
@@ -568,6 +586,12 @@ namespace SalesAnalysis
 
                     WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
                     worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+                    WorkbookStylesPart workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
+
+                    // Добавляем в документ набор стилей
+                    workbookStylesPart.Stylesheet = CreateStyleForCell();
+                    workbookStylesPart.Stylesheet.Save();
 
                     Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
                     Sheet sheet = new Sheet()
@@ -624,12 +648,13 @@ namespace SalesAnalysis
                 cell.DataType = new EnumValue<CellValues>(CellValues.String);
             }
             cell.CellValue = new CellValue(valueCell);
+            cell.StyleIndex = 1;
 
             return cell;    
         }
 
         /// <summary>
-        /// Создание строки заголовка
+        /// Создание строки заголовка для Excel
         /// </summary>
         /// <param name="indexRow"></param>
         /// <returns></returns>
@@ -683,6 +708,12 @@ namespace SalesAnalysis
             return row;
         }
 
+        /// <summary>
+        /// Создание строки для Excel
+        /// </summary>
+        /// <param name="indexRow"></param>
+        /// <param name="salesModel"></param>
+        /// <returns></returns>
         public Row CreateRow(int indexRow, SalesModel salesModel)
         {
             Row row = new Row() { RowIndex = Convert.ToUInt32(indexRow) };
@@ -753,6 +784,113 @@ namespace SalesAnalysis
             }
             db.SaveChanges();
         }
+
+        /// <summary>
+        /// Создание стилей для ячеек
+        /// </summary>
+        /// <returns></returns>
+        private static Stylesheet CreateStyleForCell()
+        {
+            return new Stylesheet(
+                new Fonts(
+                    new Font(
+                        new FontSize() { Val = 11 },
+                        new Color() { Rgb = new HexBinaryValue() { Value = "000000" } },
+                        new FontName() { Val = "Times New Roman" })
+                ),
+
+                new Fills(
+                    // Заполнение ячейки по умолчанию
+                    new Fill(
+                        new PatternFill() { PatternType = PatternValues.None }),
+
+                    // Заполнение ячейки серым цветом
+                    new Fill(
+                        new PatternFill(
+                            new ForegroundColor() { Rgb = new HexBinaryValue() { Value = "FFAAAAAA" } }
+                            )
+                        { PatternType = PatternValues.Solid }),
+
+                    // Заполнение ячейки красным
+                    new Fill(
+                        new PatternFill(
+                            new ForegroundColor() { Rgb = new HexBinaryValue() { Value = "FFFFAAAA" } }
+                        )
+                        { PatternType = PatternValues.Solid })
+                )
+                ,
+                new Borders(
+                    // 0
+                    new Border(
+                        new LeftBorder(),
+                        new RightBorder(),
+                        new TopBorder(),
+                        new BottomBorder(),
+                        new DiagonalBorder()),
+
+                    // 1
+                    new Border(
+                        new LeftBorder(
+                            new Color() { Auto = true }
+                        )
+                        { Style = BorderStyleValues.Medium },
+                        new RightBorder(
+                            new Color() { Indexed = (UInt32Value)64U }
+                        )
+                        { Style = BorderStyleValues.Medium },
+                        new TopBorder(
+                            new Color() { Auto = true }
+                        )
+                        { Style = BorderStyleValues.Medium },
+                        new BottomBorder(
+                            new Color() { Indexed = (UInt32Value)64U }
+                        )
+                        { Style = BorderStyleValues.Medium },
+                        new DiagonalBorder()),
+                    
+                    // 2 - Грани
+                    new Border( 
+                        new LeftBorder(
+                            new Color() { Auto = true }
+                        )
+                        { Style = BorderStyleValues.Thin },
+                        new RightBorder(
+                            new Color() { Indexed = (UInt32Value)64U }
+                        )
+                        { Style = BorderStyleValues.Thin },
+                        new TopBorder(
+                            new Color() { Auto = true }
+                        )
+                        { Style = BorderStyleValues.Thin },
+                        new BottomBorder(
+                            new Color() { Indexed = (UInt32Value)64U }
+                        )
+                        { Style = BorderStyleValues.Thin },
+                        new DiagonalBorder())
+                ),
+
+                new CellFormats(
+                    // По умолчанию
+                    new CellFormat() { FontId = 0, FillId = 0, BorderId = 1 },
+
+                    // Times New Roman - грани
+                    new CellFormat(new Alignment() 
+                    { 
+                        Horizontal = HorizontalAlignmentValues.Center, 
+                        Vertical = VerticalAlignmentValues.Center, 
+                        WrapText = true 
+                    }) 
+                    { 
+                        FontId = 0, 
+                        FillId = 0, 
+                        BorderId = 2, 
+                        ApplyFont = true 
+                    }
+                )
+            );
+        }
+
+        #endregion
 
     }
 }
