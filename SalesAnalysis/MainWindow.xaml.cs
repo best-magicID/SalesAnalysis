@@ -127,6 +127,8 @@ namespace SalesAnalysis
 
                 UpdateDataInTableForSelectedModel += GetDatesSalesModelsFromDb;
                 UpdateDataInTableForSelectedModel += ConvertDataFromBD;
+
+                //CreateRecordsInBd();
             }
 
             DataContext = this;
@@ -729,6 +731,27 @@ namespace SalesAnalysis
             row.AppendChild(CreateCell("AC", row, salesModel.TotalCostForYear.ToString(), CellValues.Number));
 
             return row;
+        }
+
+        /// <summary>
+        /// Создание строк с датами продаж
+        /// </summary>
+        public void CreateRecordsInBd()
+        {
+            using MyDbContext db = new MyDbContext();
+
+            Random random = new Random();
+            
+            for (int i = 0; i < 1000; i++)
+            {
+                db.DatesSale.Add(new DateSale()
+                {
+                    DateSaleModel = DateTime.Now.Date.AddDays(-i),
+                    IdModel = random.Next(1, 8),
+                    CountSoldModels = random.Next(0, 10)
+                });
+            }
+            db.SaveChanges();
         }
 
     }
