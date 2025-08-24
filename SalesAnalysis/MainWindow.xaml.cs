@@ -11,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
-using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using General = SalesAnalysis.Classes.GeneralMethods;
@@ -888,6 +887,35 @@ namespace SalesAnalysis
                     }
                 )
             );
+        }
+
+
+        /// <summary>
+        /// Кнопка для добавления даты продаж
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonAddDateSale_Click(object sender, RoutedEventArgs e)
+        {
+            AddDatSaleInDb();
+        }
+
+        /// <summary>
+        /// Добавить новую дату продаж в БД
+        /// </summary>
+        public void AddDatSaleInDb()
+        {
+            using MyDbContext myDbContext = new MyDbContext();
+            var listModels = myDbContext.Models.ToList<Model>();
+
+            WindowForAddingDateSale windowForAddingDateSale = new(listModels);
+            windowForAddingDateSale.ShowDialog();
+
+            if(windowForAddingDateSale.IsSave)
+            {
+                myDbContext.DatesSale.Add(windowForAddingDateSale.NewDateSale);
+                myDbContext.SaveChanges();
+            }
         }
 
         #endregion

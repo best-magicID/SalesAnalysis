@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace SalesAnalysis.Classes
 {
     /// <summary>
-    /// Описание класса Дата продаж
+    /// Описание класса Дата продаж модели за конкретный день (берется из БД)
     /// </summary>
     public class DateSale : INotifyPropertyChanged
     {

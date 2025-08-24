@@ -1,4 +1,4 @@
-﻿<Window x:Class="SalesAnalysis.Windows.WindowForAddNewModel"
+﻿<Window x:Class="SalesAnalysis.Windows.WindowForAddingDateSale"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,15 +6,16 @@
         xmlns:local="clr-namespace:SalesAnalysis.Windows"
         
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:WindowForAddNewModel}"
-        Title="Добавление новой модели" 
-        Height="130" 
-        Width="300" 
+        d:DataContext="{d:DesignInstance Type=local:WindowForAddingDateSale}"
+        Title="Добавление продажи за день" 
+        Height="190" 
+        Width="300"
         WindowStartupLocation="CenterScreen" 
         SizeToContent="Height">
     
     <Grid Margin="5">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -28,27 +29,41 @@
                    Grid.Column="0"
                    Grid.Row="0"
                    VerticalAlignment="Center"/>
-        <TextBox Grid.Column="1"
-                 Grid.Row="0"
-                 Margin="5"
-                 Text="{Binding NameModel}"/>
+        <ComboBox Grid.Column="1"
+                  Grid.Row="0"
+                  Margin="5"
+                  IsEditable="True"
+                  ItemsSource="{Binding ListModels}"
+                  DisplayMemberPath="NameModel"
+                  SelectedItem="{Binding SelectedModel}"/>
 
-        <TextBlock Text="Стоимость модели"
+        <TextBlock Text="Дата продажи"
                    Grid.Column="0"
                    Grid.Row="1"
                    VerticalAlignment="Center"/>
-        <TextBox Grid.Column="1"
-                 Grid.Row="1"
-                 Margin="5"
-                 Text="{Binding PriceModel}"/>
+        <DatePicker Grid.Column="1"
+                    Grid.Row="1"
+                    Margin="5"
+                    SelectedDate="{Binding NewDate}"/>
 
-        <Button Name="ButtonForSaveModel" 
+        <TextBlock Text="Количетсво моделей"
+                   Grid.Column="0"
+                   Grid.Row="2"
+                   VerticalAlignment="Center"/>
+        <TextBox Grid.Column="1"
+                 Grid.Row="2"
+                 Margin="5"
+                 Text="{Binding CountModels}"/>
+
+        <Button Name="ButtonForSaveDateSale" 
+                Margin="10"
+                Padding="5"
                 Grid.Column="1"
-                Grid.Row="2"
+                Grid.Row="3"
                 Width="80"
                 Content="Сохранить"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Click="ButtonForSaveModel_Click"/>
+                Click="ButtonForSaveDateSale_Click"/>
     </Grid>
 </Window>
