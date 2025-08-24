@@ -444,50 +444,62 @@ namespace SalesAnalysis
                 case 1:
                     salesModel.ListSaleForJanuary.Add(salesByMonth);
                     salesModel.TotalCostForJanuary = salesModel.TotalCostForJanuary + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForJanuary = salesModel.TotalAmountForJanuary + dateSalesModel.CountSoldModels;
                     break;
                 case 2:
                     salesModel.ListSaleForFebruary.Add(salesByMonth);
                     salesModel.TotalCostForFebruary = salesModel.TotalCostForFebruary + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForFebruary = salesModel.TotalAmountForFebruary + dateSalesModel.CountSoldModels;
                     break;
                 case 3:
                     salesModel.ListSaleForMarch.Add(salesByMonth);
                     salesModel.TotalCostForMarch = salesModel.TotalCostForMarch + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForMarch = salesModel.TotalAmountForMarch + dateSalesModel.CountSoldModels;
                     break;
                 case 4:
                     salesModel.ListSaleForApril.Add(salesByMonth);
                     salesModel.TotalCostForApril = salesModel.TotalCostForApril + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForApril = salesModel.TotalAmountForApril + dateSalesModel.CountSoldModels;
                     break;
                 case 5:
                     salesModel.ListSaleForMay.Add(salesByMonth);
                     salesModel.TotalCostForMay = salesModel.TotalCostForMay + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForMay = salesModel.TotalAmountForMay + dateSalesModel.CountSoldModels;
                     break;
                 case 6:
                     salesModel.ListSaleForJune.Add(salesByMonth);
                     salesModel.TotalCostForJune = salesModel.TotalCostForJune + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForJune = salesModel.TotalAmountForJune + dateSalesModel.CountSoldModels;
                     break;
                 case 7:
                     salesModel.ListSaleForJuly.Add(salesByMonth);
                     salesModel.TotalCostForJuly = salesModel.TotalCostForJuly + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForJuly = salesModel.TotalAmountForJuly + dateSalesModel.CountSoldModels;
                     break;
                 case 8:
                     salesModel.ListSaleForAugust.Add(salesByMonth);
                     salesModel.TotalCostForAugust = salesModel.TotalCostForAugust + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForAugust = salesModel.TotalAmountForAugust + dateSalesModel.CountSoldModels;
                     break;
                 case 9:
                     salesModel.ListSaleForSeptember.Add(salesByMonth);
                     salesModel.TotalCostForSeptember = salesModel.TotalCostForSeptember + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForSeptember = salesModel.TotalAmountForSeptember + dateSalesModel.CountSoldModels;
                     break;
                 case 10:
                     salesModel.ListSaleForOctober.Add(salesByMonth);
                     salesModel.TotalCostForOctober = salesModel.TotalCostForOctober + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForOctober = salesModel.TotalAmountForOctober + dateSalesModel.CountSoldModels;
                     break;
                 case 11:
                     salesModel.ListSaleForNovember.Add(salesByMonth);
                     salesModel.TotalCostForNovember = salesModel.TotalCostForNovember + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForNovember = salesModel.TotalAmountForNovember + dateSalesModel.CountSoldModels;
                     break;
                 case 12:
                     salesModel.ListSaleForDecember.Add(salesByMonth);
                     salesModel.TotalCostForDecember = salesModel.TotalCostForDecember + dateSalesModel.CostAllModelsSold;
+                    salesModel.TotalAmountForDecember = salesModel.TotalAmountForDecember + dateSalesModel.CountSoldModels;
                     break;
             }
 
@@ -504,18 +516,18 @@ namespace SalesAnalysis
                                           salesModel.TotalCostForNovember +
                                           salesModel.TotalCostForDecember;
 
-            salesModel.TotalAmountForYear = salesModel.ListSaleForJanuary.Count +
-                                            salesModel.ListSaleForFebruary.Count +
-                                            salesModel.ListSaleForMarch.Count +
-                                            salesModel.ListSaleForApril.Count +
-                                            salesModel.ListSaleForMay.Count +
-                                            salesModel.ListSaleForJune.Count +
-                                            salesModel.ListSaleForJuly.Count +
-                                            salesModel.ListSaleForAugust.Count +
-                                            salesModel.ListSaleForSeptember.Count +
-                                            salesModel.ListSaleForOctober.Count +
-                                            salesModel.ListSaleForNovember.Count +
-                                            salesModel.ListSaleForDecember.Count;
+            salesModel.TotalAmountForYear = salesModel.TotalAmountForJanuary +
+                                            salesModel.TotalAmountForFebruary +
+                                            salesModel.TotalAmountForMarch +
+                                            salesModel.TotalAmountForApril +
+                                            salesModel.TotalAmountForMay +
+                                            salesModel.TotalAmountForJune +
+                                            salesModel.TotalAmountForJuly +
+                                            salesModel.TotalAmountForAugust +
+                                            salesModel.TotalAmountForSeptember +
+                                            salesModel.TotalAmountForOctober +
+                                            salesModel.TotalAmountForNovember +
+                                            salesModel.TotalAmountForDecember;
         }
 
         /// <summary>
@@ -721,40 +733,40 @@ namespace SalesAnalysis
             row.AppendChild(CreateCell("B", row, salesModel.IdModel.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("C", row, salesModel.GetNameModel(), CellValues.String));
 
-            row.AppendChild(CreateCell("D", row, salesModel.ListSaleForJanuary.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("D", row, salesModel.TotalAmountForJanuary.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("E", row, salesModel.TotalCostForJanuary.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("F", row, salesModel.ListSaleForFebruary.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("F", row, salesModel.TotalAmountForFebruary.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("G", row, salesModel.TotalCostForFebruary.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("H", row, salesModel.ListSaleForMarch.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("H", row, salesModel.TotalAmountForMarch.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("I", row, salesModel.TotalCostForMarch.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("J", row, salesModel.ListSaleForApril.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("J", row, salesModel.TotalAmountForApril.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("K", row, salesModel.TotalCostForApril.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("L", row, salesModel.ListSaleForMay.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("L", row, salesModel.TotalAmountForMay.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("M", row, salesModel.TotalCostForMay.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("N", row, salesModel.ListSaleForJune.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("N", row, salesModel.TotalAmountForJune.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("O", row, salesModel.TotalCostForJune.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("P", row, salesModel.ListSaleForJuly.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("P", row, salesModel.TotalAmountForJuly.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("Q", row, salesModel.TotalCostForJuly.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("R", row, salesModel.ListSaleForAugust.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("R", row, salesModel.TotalAmountForAugust.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("S", row, salesModel.TotalCostForAugust.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("T", row, salesModel.ListSaleForSeptember.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("T", row, salesModel.TotalAmountForSeptember.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("U", row, salesModel.TotalCostForSeptember.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("V", row, salesModel.ListSaleForOctober.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("V", row, salesModel.TotalAmountForOctober.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("W", row, salesModel.TotalCostForOctober.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("X", row, salesModel.ListSaleForNovember.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("X", row, salesModel.TotalAmountForNovember.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("Y", row, salesModel.TotalCostForNovember.ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("Z", row, salesModel.ListSaleForDecember.Count.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("Z", row, salesModel.TotalAmountForDecember.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("AA", row, salesModel.TotalCostForDecember.ToString(), CellValues.Number));
 
             row.AppendChild(CreateCell("AB", row, salesModel.TotalAmountForYear.ToString(), CellValues.Number));
