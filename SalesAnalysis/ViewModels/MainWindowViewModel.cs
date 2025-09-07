@@ -116,7 +116,7 @@ namespace SalesAnalysis.ViewModels
         #endregion
 
 
-        #region Конструктор
+        #region КОНСТРУКТОР
 
         public MainWindowViewModel()
         {
@@ -137,8 +137,6 @@ namespace SalesAnalysis.ViewModels
 
                 UpdateDataInTableForSelectedModel += GetDatesSalesModelsFromDb;
                 UpdateDataInTableForSelectedModel += ConvertDataFromBD;
-
-                //CreateRecordsInBd();
             }
         }
 
@@ -173,66 +171,6 @@ namespace SalesAnalysis.ViewModels
         }
 
         /// <summary>
-        /// Не используется, есть в MyDbContext
-        /// </summary>
-        private void CreateDbContextOptions()
-        {
-            var builder = new ConfigurationBuilder();
-
-            builder.SetBasePath(Directory.GetCurrentDirectory());
-
-            builder.AddJsonFile("appsettings.json");
-            // создаем конфигурацию
-            var config = builder.Build();
-            // получаем строку подключения
-            var connectionString = config.GetConnectionString("DefaultConnection");
-
-            var optionsBuilder = new DbContextOptionsBuilder<MyDbContext>();
-
-            var DbContextOptions = optionsBuilder.UseSqlServer(connectionString).Options;
-        }
-
-
-        /// <summary>
-        /// Старая Проверка соединения с БД
-        /// </summary>
-        /// <returns></returns>
-        public bool OldCheckConnect()
-        {
-            bool isConnect = false;
-            string connectionString =
-                    "Server=(localdb)\\MSSQLLocalDB;" +
-                    "Database=BdForSalesAnalysis;" +
-                    "Trusted_Connection=True;" +
-                    "MultipleActiveResultSets=true";
-
-            using (MyDbContext db = new MyDbContext())
-            {
-                var asdf = db.Database.CanConnect();
-            }
-            SqlConnection connection = new SqlConnection(connectionString);
-            try
-            {
-                connection.OpenAsync();
-                //General.ShowNotificationMessageBox("Есть доступ к БД");
-                isConnect = true;
-            }
-            catch (SqlException ex)
-            {
-                GeneralMethods.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
-                isConnect = false;
-            }
-            finally
-            {
-                if (connection.State == ConnectionState.Open)
-                {
-                    connection.CloseAsync();
-                }
-            }
-            return isConnect;
-        }
-
-        /// <summary>
         /// Проверка соединения с БД
         /// </summary>
         /// <returns></returns>
@@ -247,7 +185,7 @@ namespace SalesAnalysis.ViewModels
             }
             catch (Exception ex)
             {
-                GeneralMethods.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
+                GeneralMethods.ShowNotification("Нет доступа к БД.\r\n\r\nОшибка: " + ex.Message);
             }
             return isConnect;
         }
@@ -924,10 +862,8 @@ namespace SalesAnalysis.ViewModels
 
 
         /// <summary>
-        /// Кнопка для добавления даты продаж
+        /// Выполнить команду "Добавление даты продаж"
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void AddDateSaleCommand_Execute(object parameter)
         {
             AddDatSaleInDb();
