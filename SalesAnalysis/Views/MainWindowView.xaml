@@ -1,13 +1,15 @@
-﻿<Window x:Class="SalesAnalysis.MainWindow"
+﻿<Window x:Class="SalesAnalysis.Views.MainWindowView"
+        
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SalesAnalysis"
+        
+        xmlns:vm="clr-namespace:SalesAnalysis.ViewModels"
         xmlns:conv="clr-namespace:SalesAnalysis.Converters"
         
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:MainWindow}"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=False}"
         Title="Анализ продаж" 
         Height="450" 
         Width="1100"
@@ -20,13 +22,13 @@
                     Value="105" />
         </Style>
         
-        <conv:ValueToBrushConverter x:Key="ValueToBrushConverter"/>
+        <!--<conv:ValueToBrushConverter x:Key="ValueToBrushConverter"/>-->
         
-        <Style x:Key="CellStyle" 
+        <!--<Style x:Key="CellStyle" 
                TargetType="DataGridCell">
             <Setter Property="Background" 
                     Value="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ValueToBrushConverter}}" />
-        </Style>
+        </Style>-->
 
     </Window.Resources>
 
@@ -47,11 +49,11 @@
         <StackPanel>
             <Button x:Name="ButtonAddModel" 
                     Content="Добавить модель"
-                    Click="ButtonAddModel_Click"/>
+                    Command="{Binding AddModelCommand}"/>
 
             <Button x:Name="ButtonDeleteModel" 
                     Content="Удалить модель"
-                    Click="ButtonDeleteModel_Click"/>
+                    Command="{Binding DeleteModelCommand}"/>
 
         </StackPanel>
 
@@ -94,17 +96,17 @@
                 <Button x:Name="ButtonShowAllModels" 
                         Content="Показать все модели"
                         Margin="20 0 0 0"
-                        Click="ButtonShowAllModels_Click"/>
+                        Command="{Binding ShowAllModelsCommand}"/>
 
                 <Button x:Name="ButtonSaveToExcel" 
                         Content="Сохранить данные в Excel"
                         Margin="10 0 0 0"
-                        Click="ButtonSaveToExcel_Click"/>
+                        Command="{Binding SaveToExcelCommand}"/>
 
                 <Button x:Name="ButtonAddDateSale" 
                         Content="Добавить продажу"
                         Margin="10 0 0 0"
-                        Click="ButtonAddDateSale_Click"/>
+                        Command="{Binding AddDateSaleCommand}"/>
 
 
             </StackPanel>

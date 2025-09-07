@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
-namespace SalesAnalysis.Windows
+namespace SalesAnalysis.ViewModels
 {
-    /// <summary>
-    /// Логика взаимодействия для WindowForAddNewModel.xaml
-    /// </summary>
-    public partial class WindowForAddNewModel : Window, INotifyPropertyChanged
+    public class WindowForAddNewModel_ViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -28,9 +24,9 @@ namespace SalesAnalysis.Windows
         /// <summary>
         /// Цена модели
         /// </summary>
-        public string PriceModel 
-        { 
-            get => _PriceModel; 
+        public string PriceModel
+        {
+            get => _PriceModel;
             set
             {
                 _PriceModel = value;
@@ -44,35 +40,51 @@ namespace SalesAnalysis.Windows
         /// </summary>
         public bool IsSave { get; set; } = false;
 
+
+        public event Action? RequestClose;
+
+        public RaiseCommand? SaveModelCommand { get; set; }
+
         #endregion
+
 
         #region Конструктор
 
-        public WindowForAddNewModel()
+        public WindowForAddNewModel_ViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
+            SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute);
         }
 
-        public WindowForAddNewModel(string nameModel, string priceModel)
+        public WindowForAddNewModel_ViewModel(string nameModel, string priceModel)
         {
-            InitializeComponent();
-
             this.NameModel = nameModel;
             this.PriceModel = priceModel;
 
-            DataContext = this;
+            SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute);
         }
 
         #endregion
 
         #region МЕТОДЫ
 
-        private void ButtonForSaveModel_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Выполнить команду, сохранить модель
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void SaveModelCommand_Execute(object parameter)
         {
             IsSave = true;
 
-            Close();
+            OnClose();
+        }
+
+
+        /// <summary>
+        /// Закрытие окна
+        /// </summary>
+        public void OnClose()
+        {
+            RequestClose?.Invoke();
         }
 
         #region ОБНОВЛЕНИЕ UI

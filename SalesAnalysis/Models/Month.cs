@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Месяц

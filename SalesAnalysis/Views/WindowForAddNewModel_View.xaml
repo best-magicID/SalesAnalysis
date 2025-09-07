@@ -1,12 +1,14 @@
-﻿<Window x:Class="SalesAnalysis.Windows.WindowForAddNewModel"
+﻿<Window x:Class="SalesAnalysis.Views.WindowForAddNewModel_View"
+        
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SalesAnalysis.Windows"
+        
+        xmlns:vm="clr-namespace:SalesAnalysis.ViewModels"
         
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:WindowForAddNewModel}"
+        d:DataContext="{d:DesignInstance Type=vm:WindowForAddNewModel_ViewModel}"
         Title="Добавление новой модели" 
         Height="130" 
         Width="300" 
@@ -49,6 +51,7 @@
                 Content="Сохранить"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Click="ButtonForSaveModel_Click"/>
+                Command="{Binding SaveModelCommand}"/>
+
     </Grid>
 </Window>

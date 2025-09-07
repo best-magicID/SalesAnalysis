@@ -1,13 +1,10 @@
-﻿using SalesAnalysis.Classes;
+﻿using SalesAnalysis.Helpers;
+using SalesAnalysis.Models;
 using System.Collections.ObjectModel;
-using System.Windows;
 
-namespace SalesAnalysis.Windows
+namespace SalesAnalysis.ViewModels
 {
-    /// <summary>
-    /// Окно для Добавления новой продажи
-    /// </summary>
-    public partial class WindowForAddingDateSale : Window
+    public class WindowForAddingDateSaleViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -41,23 +38,29 @@ namespace SalesAnalysis.Windows
         /// </summary>
         public bool IsSave { get; set; } = false;
 
+        public event Action? RequestClose;
+
+        public RaiseCommand? SaveDateSaleCommand { get; set; }
+
         #endregion
+
 
         #region КОНСТУРКТОР
 
-        public WindowForAddingDateSale(List<Model> newListModels)
+        public WindowForAddingDateSaleViewModel()
         {
-            InitializeComponent();
 
-            foreach (var model in newListModels)
-            {
-                ListModels.Add(model);
-            }
+        }
 
-            DataContext = this;
+        public WindowForAddingDateSaleViewModel(List<Model> newListModels)
+        {
+            newListModels.ForEach(x => ListModels.Add(x));
+
+            SaveDateSaleCommand = new RaiseCommand(SaveDateSaleCommand_Execute);
         }
 
         #endregion
+
 
         #region МЕТОДЫ
 
@@ -80,21 +83,27 @@ namespace SalesAnalysis.Windows
         }
 
         /// <summary>
-        /// Кнопка сохранения
+        /// Выполнить команду, "Сохранить дату продажи"
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonForSaveDateSale_Click(object sender, RoutedEventArgs e)
+        private void SaveDateSaleCommand_Execute(object parameter)
         {
-            if(SetDateSale())
+            if (SetDateSale())
             {
-                Close();
+                OnClose();
+                return;
             }
             else
             {
                 GeneralMethods.ShowNotification("Выберите модель");
             }
+        }
 
+        /// <summary>
+        /// Закрытие окна
+        /// </summary>
+        public void OnClose()
+        {
+            RequestClose?.Invoke();
         }
 
         #endregion

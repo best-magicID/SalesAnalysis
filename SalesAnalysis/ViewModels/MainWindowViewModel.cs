@@ -5,25 +5,24 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
-using SalesAnalysis.Classes;
-using SalesAnalysis.Windows;
+using SalesAnalysis.Helpers;
+using SalesAnalysis.Models;
+using SalesAnalysis.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using General = SalesAnalysis.Classes.GeneralMethods;
 
-
-namespace SalesAnalysis
+namespace SalesAnalysis.ViewModels
 {
     public delegate void LoadDataFromBD();
 
     /// <summary>
-    /// Главное окно
+    /// ViewModel для главного окна
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public class MainWindowViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -103,17 +102,28 @@ namespace SalesAnalysis
         }
         private Model? _SelectedModel;
 
+        #region КОМАНДЫ
+
+        public RaiseCommand? AddModelCommand { get; set; }
+        public RaiseCommand? DeleteModelCommand { get; set; }
+
+        public RaiseCommand? ShowAllModelsCommand { get; set; }
+        public RaiseCommand? SaveToExcelCommand { get; set; }
+        public RaiseCommand? AddDateSaleCommand { get; set; }
+
         #endregion
+
+        #endregion
+
 
         #region Конструктор
 
-        public MainWindow()
+        public MainWindowViewModel()
         {
-            InitializeComponent();
-
-            //CreateDbContextOptions();
             if (CheckConnect())
             {
+                LoadCommands();
+
                 GetMonthsFromBd();
 
                 UpdateDataInTableForAllModels += GetModelsFromBd;
@@ -130,8 +140,6 @@ namespace SalesAnalysis
 
                 //CreateRecordsInBd();
             }
-
-            DataContext = this;
         }
 
         #endregion
@@ -148,6 +156,21 @@ namespace SalesAnalysis
         }
 
         #endregion
+
+        /// <summary>
+        /// Загрузка команд
+        /// </summary>
+        public void LoadCommands()
+        {
+            AddModelCommand = new RaiseCommand(AddModelCommand_Execute);
+            DeleteModelCommand = new RaiseCommand(DeleteModelCommand_Execute);
+
+            ShowAllModelsCommand = new RaiseCommand(ShowAllModelsCommand_Execute);
+
+            SaveToExcelCommand = new RaiseCommand(SaveToExcelCommand_Execute);
+
+            AddDateSaleCommand = new RaiseCommand(AddDateSaleCommand_Execute);
+        }
 
         /// <summary>
         /// Не используется, есть в MyDbContext
@@ -196,7 +219,7 @@ namespace SalesAnalysis
             }
             catch (SqlException ex)
             {
-                General.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
+                GeneralMethods.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
                 isConnect = false;
             }
             finally
@@ -224,7 +247,7 @@ namespace SalesAnalysis
             }
             catch (Exception ex)
             {
-                General.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
+                GeneralMethods.ShowNotification("Нет доступа к БД. Ошибка: " + ex.Message);
             }
             return isConnect;
         }
@@ -236,15 +259,19 @@ namespace SalesAnalysis
         /// <param name="price"></param>
         public void AddModelInBd(string? name = "", string? price = "")
         {
-            WindowForAddNewModel windowForAddNewModel = new();
+            WindowForAddNewModel_ViewModel windowForAddNewModel_ViewModel = new ();
+            WindowForAddNewModel_View windowForAddNewModel = new()
+            {
+                DataContext = windowForAddNewModel_ViewModel
+            };
             windowForAddNewModel.ShowDialog();
 
-            if (windowForAddNewModel.IsSave)
+            if (windowForAddNewModel_ViewModel.IsSave)
             {
                 using MyDbContext db = new MyDbContext();
 
-                db.Models.Add(new Model(newNameModel: windowForAddNewModel.NameModel,
-                                        newPriceModel: (double.TryParse(windowForAddNewModel.PriceModel, out double priceModel) ? priceModel : 0)));
+                db.Models.Add(new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
+                                        newPriceModel: (double.TryParse(windowForAddNewModel_ViewModel.PriceModel, out double priceModel) ? priceModel : 0)));
                 db.SaveChanges();
             }
         }
@@ -256,12 +283,15 @@ namespace SalesAnalysis
         /// <param name="idModel"></param>
         public void DeleteModelInBd(string text, Model idModel)
         {
-            if (General.ShowSelectionWindow(text) == MessageBoxResult.Yes)
+            if (GeneralMethods.ShowSelectionWindow(text) == MessageBoxResult.Yes)
             {
                 using MyDbContext db = new MyDbContext();
 
                 db.Models.Remove(idModel);
                 db.SaveChanges();
+
+                SelectedModel = null;
+                UpdateDataInTableForAllModels?.Invoke();
             }
         }
 
@@ -270,12 +300,12 @@ namespace SalesAnalysis
         /// </summary>
         public void GetModelsFromBd()
         {
-            using (MyDbContext db = new ())
+            using (MyDbContext db = new())
             {
                 ListModels.Clear();
 
                 List<Model> listModel = [];
-                if(SelectedModel != null)
+                if (SelectedModel != null)
                 {
                     listModel = db.Models.Where(x => x.IdModel == SelectedModel.IdModel).ToList();
                 }
@@ -328,12 +358,12 @@ namespace SalesAnalysis
 
                 foreach (var year in years)
                 {
-                    if(!ListYears.Any(x => x == year.Year))
+                    if (!ListYears.Any(x => x == year.Year))
                     {
                         ListYears.Add(year.Year);
                     }
                 }
-                if(ListYears.Count > 0)
+                if (ListYears.Count > 0)
                 {
                     SelectedYear = ListYears.FirstOrDefault();
                 }
@@ -345,7 +375,7 @@ namespace SalesAnalysis
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonAddModel_Click(object sender, RoutedEventArgs e)
+        private void AddModelCommand_Execute(object parameter)
         {
             AddModelInBd();
             GetModelsFromBd();
@@ -403,7 +433,7 @@ namespace SalesAnalysis
                 }
                 else
                 {
-                    if(SelectedModel.IdModel == model.IdModel)
+                    if (SelectedModel.IdModel == model.IdModel)
                     {
                         ListSalesModels.Add(new SalesModel(model));
                     }
@@ -533,9 +563,7 @@ namespace SalesAnalysis
         /// <summary>
         /// Показать все модели
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonShowAllModels_Click(object sender, RoutedEventArgs e)
+        private void ShowAllModelsCommand_Execute(object parameter)
         {
             SelectedModel = null;
 
@@ -546,34 +574,27 @@ namespace SalesAnalysis
         /// <summary>
         /// Удаление модели
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonDeleteModel_Click(object sender, RoutedEventArgs e)
+        private void DeleteModelCommand_Execute(object parameter)
         {
             if (SelectedModel != null)
             {
                 string text = "Удалить: " + SelectedModel.NameModel;
                 DeleteModelInBd(text, SelectedModel);
-
-                SelectedModel = null;
-                UpdateDataInTableForAllModels?.Invoke();
             }
         }
 
         /// <summary>
         /// Кнопка для сохранения таблицы в Excel
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonSaveToExcel_Click(object sender, RoutedEventArgs e)
+        private void SaveToExcelCommand_Execute(object parameter)
         {
-            SaveToExcel1();
+            SaveToExcel();
         }
 
         /// <summary>
         /// Сохранение таблицы в Excel
         /// </summary>
-        public void SaveToExcel1()
+        public void SaveToExcel()
         {
             try
             {
@@ -585,7 +606,7 @@ namespace SalesAnalysis
                 saveFileDialog.FileName = nameFile;
                 bool? result = saveFileDialog.ShowDialog();
 
-                if(result == null || result == false)
+                if (result == null || result == false)
                 {
                     return;
                 }
@@ -626,12 +647,12 @@ namespace SalesAnalysis
 
                     workbookPart.Workbook.Save();
 
-                    General.ShowNotification("Экспорт в Excel завершен.");
+                    GeneralMethods.ShowNotification("Экспорт в Excel завершен.");
                 }
             }
             catch (Exception ex)
             {
-                General.ShowNotification(ex.Message);
+                GeneralMethods.ShowNotification(ex.Message);
             }
         }
 
@@ -661,7 +682,7 @@ namespace SalesAnalysis
             cell.CellValue = new CellValue(valueCell);
             cell.StyleIndex = 1;
 
-            return cell;    
+            return cell;
         }
 
         /// <summary>
@@ -783,7 +804,7 @@ namespace SalesAnalysis
             using MyDbContext db = new MyDbContext();
 
             Random random = new Random();
-            
+
             for (int i = 0; i < 1000; i++)
             {
                 db.DatesSale.Add(new DateSale()
@@ -858,9 +879,9 @@ namespace SalesAnalysis
                         )
                         { Style = BorderStyleValues.Medium },
                         new DiagonalBorder()),
-                    
+
                     // 2 - Грани
-                    new Border( 
+                    new Border(
                         new LeftBorder(
                             new Color() { Auto = true }
                         )
@@ -885,17 +906,17 @@ namespace SalesAnalysis
                     new CellFormat() { FontId = 0, FillId = 0, BorderId = 1 },
 
                     // Times New Roman - грани
-                    new CellFormat(new Alignment() 
-                    { 
-                        Horizontal = HorizontalAlignmentValues.Center, 
-                        Vertical = VerticalAlignmentValues.Center, 
-                        WrapText = true 
-                    }) 
-                    { 
-                        FontId = 0, 
-                        FillId = 0, 
-                        BorderId = 2, 
-                        ApplyFont = true 
+                    new CellFormat(new Alignment()
+                    {
+                        Horizontal = HorizontalAlignmentValues.Center,
+                        Vertical = VerticalAlignmentValues.Center,
+                        WrapText = true
+                    })
+                    {
+                        FontId = 0,
+                        FillId = 0,
+                        BorderId = 2,
+                        ApplyFont = true
                     }
                 )
             );
@@ -907,7 +928,7 @@ namespace SalesAnalysis
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ButtonAddDateSale_Click(object sender, RoutedEventArgs e)
+        private void AddDateSaleCommand_Execute(object parameter)
         {
             AddDatSaleInDb();
         }
@@ -920,12 +941,16 @@ namespace SalesAnalysis
             using MyDbContext myDbContext = new MyDbContext();
             var listModels = myDbContext.Models.ToList<Model>();
 
-            WindowForAddingDateSale windowForAddingDateSale = new(listModels);
+            WindowForAddingDateSaleViewModel windowForAddingDateSaleViewModel = new WindowForAddingDateSaleViewModel( listModels );
+            WindowForAddingDateSaleView windowForAddingDateSale = new()
+            {
+                DataContext = windowForAddingDateSaleViewModel
+            };
             windowForAddingDateSale.ShowDialog();
 
-            if(windowForAddingDateSale.IsSave)
+            if (windowForAddingDateSaleViewModel.IsSave)
             {
-                myDbContext.DatesSale.Add(windowForAddingDateSale.NewDateSale);
+                myDbContext.DatesSale.Add(windowForAddingDateSaleViewModel.NewDateSale);
                 myDbContext.SaveChanges();
             }
         }

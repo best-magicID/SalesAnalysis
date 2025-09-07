@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Описание модели
@@ -56,6 +56,9 @@ namespace SalesAnalysis.Classes
 
         #endregion
 
+
+        #region КОНСТРУКТОР
+
         /// <summary>
         /// Нужен для дата контекста из БД
         /// </summary>
@@ -80,6 +83,9 @@ namespace SalesAnalysis.Classes
             PriceModel = newPriceModel;
         }
 
+        #endregion
+
+
         #region ОБНОВЛЕНИЕ UI
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -89,6 +95,7 @@ namespace SalesAnalysis.Classes
         }
 
         #endregion
+
 
         public string GetNameModel()
         {

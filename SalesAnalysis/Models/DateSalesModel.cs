@@ -1,4 +1,4 @@
-﻿namespace SalesAnalysis.Classes
+﻿namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Дата продажи модели

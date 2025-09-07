@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Описание класса Дата продаж модели за конкретный день (берется из БД)

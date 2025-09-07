@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using SalesAnalysis.Models;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Helpers
 {
     /// <summary>
     /// Датаконтекст БД
     /// </summary>
-    class MyDbContext : DbContext
+    public class MyDbContext : DbContext
     {
         public DbSet<Model> Models { get; set; } = null!;
 

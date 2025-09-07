@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Продажи моделей за месяц

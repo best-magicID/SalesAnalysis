@@ -1,12 +1,14 @@
-﻿<Window x:Class="SalesAnalysis.Windows.WindowForAddingDateSale"
+﻿<Window x:Class="SalesAnalysis.Views.WindowForAddingDateSaleView"
+        
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SalesAnalysis.Windows"
+        
+        xmlns:vm="clr-namespace:SalesAnalysis.ViewModels"
         
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:WindowForAddingDateSale}"
+        d:DataContext="{d:DesignInstance Type=vm:WindowForAddingDateSaleViewModel, IsDesignTimeCreatable=True}"
         Title="Добавление продажи за день" 
         Height="190" 
         Width="300"
@@ -64,6 +66,7 @@
                 Content="Сохранить"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Click="ButtonForSaveDateSale_Click"/>
+                Command="{Binding SaveDateSaleCommand}"/>
+
     </Grid>
 </Window>

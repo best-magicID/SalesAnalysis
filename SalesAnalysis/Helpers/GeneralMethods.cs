@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SalesAnalysis.Classes
+namespace SalesAnalysis.Helpers
 {
     /// <summary>
     /// Общие методы 
