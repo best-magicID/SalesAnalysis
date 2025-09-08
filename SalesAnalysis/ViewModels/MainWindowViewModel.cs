@@ -5,9 +5,7 @@ using SalesAnalysis.Models;
 using SalesAnalysis.Services;
 using SalesAnalysis.Views;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace SalesAnalysis.ViewModels
@@ -17,9 +15,14 @@ namespace SalesAnalysis.ViewModels
     /// <summary>
     /// ViewModel для главного окна
     /// </summary>
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : BaseViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
+
+        /// <summary>
+        /// Работа с Excel
+        /// </summary>
+        private readonly IWorkingWithExcel? _iWorkingWithExcel;
 
         /// <summary>
         /// Лист моделей полученных из БД
@@ -97,10 +100,6 @@ namespace SalesAnalysis.ViewModels
         }
         private Model? _SelectedModel;
 
-        /// <summary>
-        /// Работа с Excel
-        /// </summary>
-        private readonly IWorkingWithExcel? _iWorkingWithExcel;
 
         #region КОМАНДЫ
 
@@ -150,16 +149,6 @@ namespace SalesAnalysis.ViewModels
 
 
         #region МЕТОДЫ
-
-        #region ОБНОВЛЕНИЕ UI
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
 
         /// <summary>
         /// Загрузка команд

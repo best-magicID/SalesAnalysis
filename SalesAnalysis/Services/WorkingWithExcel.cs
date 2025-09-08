@@ -172,7 +172,7 @@ namespace SalesAnalysis.Services
 
             row.AppendChild(CreateCell("A", row, (indexRow - 1).ToString(), CellValues.Number));
             row.AppendChild(CreateCell("B", row, salesModel.IdModel.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("C", row, salesModel.GetNameModel(), CellValues.String));
+            row.AppendChild(CreateCell("C", row, salesModel.NameModel, CellValues.String));
 
             row.AppendChild(CreateCell("D", row, salesModel.TotalAmountForJanuary.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("E", row, salesModel.TotalCostForJanuary.ToString(), CellValues.Number));

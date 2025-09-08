@@ -1,13 +1,11 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SalesAnalysis.Models
 {
     /// <summary>
     /// Описание модели
     /// </summary>
-    public class Model : INotifyPropertyChanged
+    public class Model
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -15,44 +13,17 @@ namespace SalesAnalysis.Models
         /// Id модели
         /// </summary>
         [Key]
-        public int IdModel
-        {
-            get => _IdModel;
-            set
-            {
-                _IdModel = value;
-                //OnPropertyChanged();
-            }
-        }
-        private int _IdModel;
+        public int IdModel { get; set; }
 
         /// <summary>
         /// Название модели
         /// </summary>
-        public string NameModel
-        {
-            get => _NameModel;
-            set
-            {
-                _NameModel = value;
-                //OnPropertyChanged();
-            }
-        }
-        private string _NameModel = string.Empty;
+        public string NameModel { get; set; } = string.Empty;
 
         /// <summary>
         /// Стоимость модели
         /// </summary>
-        public double PriceModel
-        {
-            get => _PriceModel;
-            set
-            {
-                _PriceModel = value;
-                //OnPropertyChanged();
-            }
-        }
-        private double _PriceModel;
+        public double PriceModel { get; set; }
 
         #endregion
 
@@ -84,23 +55,6 @@ namespace SalesAnalysis.Models
         }
 
         #endregion
-
-
-        #region ОБНОВЛЕНИЕ UI
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
-
-        public string GetNameModel()
-        {
-            return NameModel;
-        }
 
     }
 }

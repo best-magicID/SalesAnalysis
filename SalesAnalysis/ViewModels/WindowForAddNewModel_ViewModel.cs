@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-namespace SalesAnalysis.ViewModels
+﻿namespace SalesAnalysis.ViewModels
 {
-    public class WindowForAddNewModel_ViewModel
+    public class WindowForAddNewModel_ViewModel : BaseViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
 
@@ -13,11 +10,7 @@ namespace SalesAnalysis.ViewModels
         public string NameModel
         {
             get => _NameModel;
-            set
-            {
-                _NameModel = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _NameModel, value);
         }
         private string _NameModel = string.Empty;
 
@@ -27,11 +20,7 @@ namespace SalesAnalysis.ViewModels
         public string PriceModel
         {
             get => _PriceModel;
-            set
-            {
-                _PriceModel = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _PriceModel, value);
         }
         public string _PriceModel = string.Empty;
 
@@ -78,7 +67,6 @@ namespace SalesAnalysis.ViewModels
             OnClose();
         }
 
-
         /// <summary>
         /// Закрытие окна
         /// </summary>
@@ -86,16 +74,6 @@ namespace SalesAnalysis.ViewModels
         {
             RequestClose?.Invoke();
         }
-
-        #region ОБНОВЛЕНИЕ UI
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
 
         #endregion
     }

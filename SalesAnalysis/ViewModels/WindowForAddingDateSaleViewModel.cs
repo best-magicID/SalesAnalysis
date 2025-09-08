@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace SalesAnalysis.ViewModels
 {
-    public class WindowForAddingDateSaleViewModel
+    public class WindowForAddingDateSaleViewModel : BaseViewModel
     {
         #region ПОЛЯ И СВОЙСТВА
 
