@@ -30,11 +30,6 @@ namespace SalesAnalysis
         {
             base.OnStartup(e);
 
-            //MainWindowView mainWindowView = new MainWindowView()
-            //{
-            //    DataContext = new MainWindowViewModel()
-            //};
-
             MainWindowView mainWindowView = _serviceProvider.GetRequiredService<MainWindowView>();
             mainWindowView.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
 

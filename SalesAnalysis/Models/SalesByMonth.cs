@@ -29,24 +29,5 @@ namespace SalesAnalysis.Models
             ListDateSalesModels.Add(newDateSalesModels);
         }
 
-        public SalesByMonth(int newIdModel,
-                            string newNameModel,
-                            double newPriceModel,
-                            Month newMonth,
-                            ObservableCollection<DateSalesModel> newListDateSalesModels)
-            : base(newIdModel, newNameModel, newPriceModel)
-        {
-            Month = newMonth;
-            ListDateSalesModels = newListDateSalesModels;
-        }
-
-        public SalesByMonth(DateSalesModel dateSalesModel,
-                            Month newMonth,
-                            ObservableCollection<DateSalesModel> newListDateSalesModels)
-            : base(dateSalesModel.IdModel, dateSalesModel.NameModel, dateSalesModel.PriceModel)
-        {
-            Month = newMonth;
-            ListDateSalesModels = newListDateSalesModels;
-        }
     }
 }

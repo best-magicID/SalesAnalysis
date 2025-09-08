@@ -204,7 +204,7 @@ namespace SalesAnalysis.ViewModels
                 using MyDbContext db = new MyDbContext();
 
                 db.Models.Add(new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
-                                        newPriceModel: (double.TryParse(windowForAddNewModel_ViewModel.PriceModel, out double priceModel) ? priceModel : 0)));
+                                        newPriceModel: windowForAddNewModel_ViewModel.PriceModel));
                 db.SaveChanges();
             }
         }
@@ -247,12 +247,7 @@ namespace SalesAnalysis.ViewModels
                     listModel = db.Models.ToList();
                 }
 
-                foreach (Model model in listModel)
-                {
-                    ListModels.Add(new Model(newIdModel: model.IdModel,
-                                             newNameModel: model.NameModel,
-                                             newPriceModel: model.PriceModel));
-                }
+                listModel.ForEach(x => ListModels.Add(x));
             }
         }
 
@@ -319,36 +314,22 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetDatesSalesModelsFromDb()
         {
-            using MyDbContext db = new MyDbContext();
+            using MyDbContext db = new();
 
             var data = (from tModels in (SelectedModel != null ? db.Models.Where(x => x.IdModel == SelectedModel.IdModel) : db.Models)
                         join tDatesSale in db.DatesSale on tModels.IdModel equals tDatesSale.IdModel
                         where tDatesSale.DateSaleModel.Year == SelectedYear
-                        select new
-                        {
-                            tModels.IdModel,
-                            tModels.NameModel,
-                            tModels.PriceModel,
-                            tDatesSale.IdDateSale,
-                            tDatesSale.DateSaleModel,
-                            tDatesSale.CountSoldModels
-                        }).ToList();
+                        select new DateSalesModel(tModels.IdModel,
+                                                  tModels.NameModel,
+                                                  tModels.PriceModel,
+                                                  tDatesSale.IdDateSale,
+                                                  tDatesSale.DateSaleModel,
+                                                  tDatesSale.CountSoldModels))
+                                                  .ToList();
 
             ListAllDatesSalesModels.Clear();
-            int i = 1;
-            if (data.Count > 0)
-            {
-                foreach (var item in data)
-                {
-                    ListAllDatesSalesModels.Add(new(newIndexNumber: i++,
-                                                    newIdModel: item.IdModel,
-                                                    newNameModel: item.NameModel,
-                                                    newPriceModel: item.PriceModel,
-                                                    newIdDateSale: item.IdDateSale,
-                                                    newDateSaleModel: item.DateSaleModel,
-                                                    newCountSoldModels: item.CountSoldModels));
-                }
-            }
+
+            data?.ForEach(x => ListAllDatesSalesModels.Add(x));
         }
 
         /// <summary>

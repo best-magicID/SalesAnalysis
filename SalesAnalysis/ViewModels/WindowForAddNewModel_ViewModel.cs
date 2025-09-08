@@ -15,14 +15,14 @@
         private string _NameModel = string.Empty;
 
         /// <summary>
-        /// Цена модели
+        /// Стоимость модели
         /// </summary>
-        public string PriceModel
+        public double PriceModel
         {
             get => _PriceModel;
             set => SetProperty(ref _PriceModel, value);
         }
-        public string _PriceModel = string.Empty;
+        public double _PriceModel;
 
         /// <summary>
         /// Флаг, сохранение данных
@@ -44,15 +44,8 @@
             SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute);
         }
 
-        public WindowForAddNewModel_ViewModel(string nameModel, string priceModel)
-        {
-            this.NameModel = nameModel;
-            this.PriceModel = priceModel;
-
-            SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute);
-        }
-
         #endregion
+
 
         #region МЕТОДЫ
 

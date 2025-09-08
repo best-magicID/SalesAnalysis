@@ -6,87 +6,34 @@
     public class DateSalesModel : Model
     {
         /// <summary>
-        /// Номер по порядку
-        /// </summary>
-        public int IndexNumber
-        {
-            get => _IndexNumber;
-            set
-            {
-                _IndexNumber = value;
-                //OnPropertyChanged();
-            }
-        }
-        private int _IndexNumber;
-
-        /// <summary>
         /// Id даты продажи
         /// </summary>
-        public int IdDateSale
-        {
-            get => _IdDateSale;
-            set
-            {
-                _IdDateSale = value;
-                //OnPropertyChanged();
-            }
-        }
-        private int _IdDateSale;
+        public int IdDateSale { get; set; }
 
         /// <summary>
         /// Дата продажи модели 
         /// </summary>
-        public DateTime DateSaleModel
-        {
-            get => _DateSaleModel;
-            set
-            {
-                _DateSaleModel = value;
-                //OnPropertyChanged();
-            }
-        }
-        private DateTime _DateSaleModel;
+        public DateTime DateSaleModel { get; set; }
 
         /// <summary>
         /// Количество проданных моделей 
         /// </summary>
-        public int CountSoldModels
-        {
-            get => _CountSoldModels;
-            set
-            {
-                _CountSoldModels = value;
-                //OnPropertyChanged();
-            }
-        }
-        private int _CountSoldModels;
+        public int CountSoldModels { get; set; }
 
         /// <summary>
         /// Стоимость всех проданных моделей 
         /// </summary>
-        public double CostAllModelsSold
-        {
-            get => _CostAllModelsSold;
-            set
-            {
-                _CostAllModelsSold = value;
-                //OnPropertyChanged();
-            }
-        }
-        private double _CostAllModelsSold;
+        public double CostAllModelsSold { get; set; }
 
 
-        public DateSalesModel(int newIndexNumber, 
-                               int newIdModel, 
-                               string newNameModel,
-                               double newPriceModel,
-                               int newIdDateSale,
-                               DateTime newDateSaleModel,
-                               int newCountSoldModels) 
+        public DateSalesModel(int newIdModel,
+                              string newNameModel,
+                              double newPriceModel,
+                              int newIdDateSale,
+                              DateTime newDateSaleModel,
+                              int newCountSoldModels) 
             : base(newIdModel, newNameModel, newPriceModel) 
         {
-            IndexNumber = newIdModel; //
-
             IdDateSale = newIdDateSale;
             DateSaleModel = newDateSaleModel;
             CountSoldModels = newCountSoldModels;
