@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using SalesAnalysis.Models;
 
-namespace SalesAnalysis.Helpers
+namespace SalesAnalysis.Data
 {
     /// <summary>
     /// Датаконтекст БД
