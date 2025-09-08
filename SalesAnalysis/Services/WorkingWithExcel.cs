@@ -18,7 +18,7 @@ namespace SalesAnalysis.Services
         {
             try
             {
-                var nameFile = "Продажи " + DateTime.Now.ToShortDateString() + ".xlsx";
+                var nameFile = "Продажи " + DateTime.Now.ToString("dd.MM.yyyy HH-mm") + ".xlsx";
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "Excel.xlsx|*.xlsx";
