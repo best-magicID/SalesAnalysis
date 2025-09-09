@@ -6,7 +6,7 @@ using SalesAnalysis.Models;
 namespace SalesAnalysis.Data
 {
     /// <summary>
-    /// Датаконтекст БД
+    /// Контекст БД
     /// </summary>
     public class MyDbContext : DbContext
     {

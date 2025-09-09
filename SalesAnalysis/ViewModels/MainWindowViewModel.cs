@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml;
-using SalesAnalysis.Data;
+﻿using SalesAnalysis.Data;
 using SalesAnalysis.Helpers;
 using SalesAnalysis.Models;
 using SalesAnalysis.Services;
@@ -58,7 +57,6 @@ namespace SalesAnalysis.ViewModels
             set
             {
                 _SelectedYear = value;
-                OnPropertyChanged();
 
                 if (SelectedModel == null)
                 {
@@ -70,7 +68,7 @@ namespace SalesAnalysis.ViewModels
                 }
             }
         }
-        private int _SelectedYear { get; set; } = DateTime.Now.Year;
+        private int _SelectedYear { get; set; }
 
         /// <summary>
         /// Загрузка данных из БД для всех моделей 
@@ -92,10 +90,10 @@ namespace SalesAnalysis.ViewModels
             {
                 _SelectedModel = value;
 
-                if (SelectedModel != null)
-                {
+                //if (SelectedModel != null)
+                //{
                     UpdateDataInTableForSelectedModel?.Invoke();
-                }
+                //}
             }
         }
         private Model? _SelectedModel;
@@ -129,15 +127,12 @@ namespace SalesAnalysis.ViewModels
                 LoadCommands();
                 _iWorkingWithExcel = newIWorkingWithExcel;
 
+                GetListYearsFromBd();
                 GetMonthsFromBd();
 
                 UpdateDataInTableForAllModels += GetModelsFromBd;
-                GetListYearsFromBd();
-
                 UpdateDataInTableForAllModels += GetDatesSalesModelsFromDb;
-
                 UpdateDataInTableForAllModels += ConvertDataFromBD;
-
                 UpdateDataInTableForAllModels.Invoke();
 
                 UpdateDataInTableForSelectedModel += GetDatesSalesModelsFromDb;
@@ -203,9 +198,12 @@ namespace SalesAnalysis.ViewModels
             {
                 using MyDbContext db = new MyDbContext();
 
-                db.Models.Add(new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
-                                        newPriceModel: windowForAddNewModel_ViewModel.PriceModel));
+                var newModel = new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
+                                        newPriceModel: windowForAddNewModel_ViewModel.PriceModel);
+                db.Models.Add(newModel);
                 db.SaveChanges();
+
+                ListModels.Add(newModel);
             }
         }
 
@@ -213,18 +211,21 @@ namespace SalesAnalysis.ViewModels
         /// Удалить модель из БД
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="idModel"></param>
-        public void DeleteModelInBd(string text, Model idModel)
+        /// <param name="model"></param>
+        public void DeleteModelInBd(string text, Model model)
         {
             if (GeneralMethods.ShowSelectionWindow(text) == MessageBoxResult.Yes)
             {
-                using MyDbContext db = new MyDbContext();
+                SelectedModel = null;
 
-                db.Models.Remove(idModel);
+                using MyDbContext db = new();
+
+                db.Models.Remove(model);
                 db.SaveChanges();
 
-                SelectedModel = null;
-                UpdateDataInTableForAllModels?.Invoke();
+                ListModels.Remove(model);
+
+                //UpdateDataInTableForAllModels?.Invoke();
             }
         }
 
@@ -233,22 +234,12 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetModelsFromBd()
         {
-            using (MyDbContext db = new())
-            {
-                ListModels.Clear();
+            using MyDbContext db = new();
 
-                List<Model> listModel = [];
-                if (SelectedModel != null)
-                {
-                    listModel = db.Models.Where(x => x.IdModel == SelectedModel.IdModel).ToList();
-                }
-                else
-                {
-                    listModel = db.Models.ToList();
-                }
+            List<Model> listModel = SelectedModel == null ? db.Models.ToList<Model>() : db.Models.Where(x => x.IdModel == SelectedModel.IdModel).ToList<Model>();
 
-                listModel.ForEach(x => ListModels.Add(x));
-            }
+            ListModels.Clear();
+            listModel.ForEach(x => ListModels.Add(x));
         }
 
         /// <summary>
@@ -256,21 +247,12 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetMonthsFromBd()
         {
-            using (MyDbContext db = new MyDbContext())
-            {
-                ListMonths.Clear();
+            using MyDbContext db = new();
 
-                var months = db.Months.ToList();
+            var months = db.Months.ToList<Month>();
 
-                foreach (Month month in months)
-                {
-                    ListMonths.Add(new Month()
-                    {
-                        IdMonth = month.IdMonth,
-                        NameMonth = month.NameMonth
-                    });
-                }
-            }
+            ListMonths.Clear();
+            months?.ForEach(x => ListMonths.Add(x));
         }
 
         /// <summary>
@@ -278,23 +260,16 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetListYearsFromBd()
         {
-            using (MyDbContext db = new())
+            using MyDbContext db = new();
+
+            var years = db.DatesSale.Select(x => x.DateSaleModel.ToString("yyyy")).ToList().Distinct().ToList();
+
+            ListYears.Clear();
+            years.ForEach(x => ListYears.Add(int.Parse(x)));
+
+            if (ListYears.Count > 0)
             {
-                ListYears.Clear();
-
-                var years = db.DatesSale.Select(x => x.DateSaleModel).ToList(); ;
-
-                foreach (var year in years)
-                {
-                    if (!ListYears.Any(x => x == year.Year))
-                    {
-                        ListYears.Add(year.Year);
-                    }
-                }
-                if (ListYears.Count > 0)
-                {
-                    SelectedYear = ListYears.FirstOrDefault();
-                }
+                SelectedYear = ListYears.FirstOrDefault();
             }
         }
 
@@ -306,17 +281,16 @@ namespace SalesAnalysis.ViewModels
         private void AddModelCommand_Execute(object parameter)
         {
             AddModelInBd();
-            GetModelsFromBd();
         }
 
         /// <summary>
-        /// Получение дат продаж моделей из БД
+        /// Получение дат продаж моделей из БД за выбранный год
         /// </summary>
         public void GetDatesSalesModelsFromDb()
         {
             using MyDbContext db = new();
 
-            var data = (from tModels in (SelectedModel != null ? db.Models.Where(x => x.IdModel == SelectedModel.IdModel) : db.Models)
+            var data = (from tModels in (SelectedModel == null ? db.Models : db.Models.Where(x => x.IdModel == SelectedModel.IdModel))
                         join tDatesSale in db.DatesSale on tModels.IdModel equals tDatesSale.IdModel
                         where tDatesSale.DateSaleModel.Year == SelectedYear
                         select new DateSalesModel(tModels.IdModel,
@@ -345,12 +319,10 @@ namespace SalesAnalysis.ViewModels
                 {
                     ListSalesModels.Add(new SalesModel(model));
                 }
-                else
+                else if (SelectedModel.IdModel == model.IdModel)
                 {
-                    if (SelectedModel.IdModel == model.IdModel)
-                    {
-                        ListSalesModels.Add(new SalesModel(model));
-                    }
+                    ListSalesModels.Add(new SalesModel(model));
+                    break;
                 }
             }
 
@@ -515,11 +487,11 @@ namespace SalesAnalysis.ViewModels
         }
 
         /// <summary>
-        /// Создание строк с датами продаж
+        /// Создание строк с датами продаж (Тестовые данные)
         /// </summary>
         public void CreateRecordsInBd()
         {
-            using MyDbContext db = new MyDbContext();
+            using MyDbContext db = new();
 
             Random random = new Random();
 
@@ -548,10 +520,10 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void AddDatSaleInDb()
         {
-            using MyDbContext myDbContext = new MyDbContext();
+            using MyDbContext myDbContext = new ();
             var listModels = myDbContext.Models.ToList<Model>();
 
-            WindowForAddingDateSaleViewModel windowForAddingDateSaleViewModel = new WindowForAddingDateSaleViewModel( listModels );
+            WindowForAddingDateSaleViewModel windowForAddingDateSaleViewModel = new(listModels);
             WindowForAddingDateSaleView windowForAddingDateSale = new()
             {
                 DataContext = windowForAddingDateSaleViewModel

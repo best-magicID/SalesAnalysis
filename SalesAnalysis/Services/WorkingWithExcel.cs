@@ -10,7 +10,6 @@ namespace SalesAnalysis.Services
 {
     public class WorkingWithExcel : IWorkingWithExcel
     {
-
         /// <summary>
         /// Сохранение таблицы в Excel
         /// </summary>
