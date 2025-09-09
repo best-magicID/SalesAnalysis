@@ -5,7 +5,7 @@ namespace SalesAnalysis.Models
     /// <summary>
     /// Продажи конкретной модели за каждый месяц
     /// </summary>
-    public class SalesModel : Model
+    public class SalesByYear : Model
     {
         /// <summary>
         /// Общее количество проданных моделей за Январь
@@ -75,7 +75,7 @@ namespace SalesAnalysis.Models
         public int TotalAmountForYear { get; set; }
 
 
-        public SalesModel(Model model)
+        public SalesByYear(Model model)
             : base(model.IdModel, model.NameModel, model.PriceModel)
         {
 

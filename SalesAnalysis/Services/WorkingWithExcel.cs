@@ -1,7 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.Win32;
 using SalesAnalysis.Helpers;
 using SalesAnalysis.Models;
 using System.Collections.ObjectModel;
@@ -13,61 +12,54 @@ namespace SalesAnalysis.Services
         /// <summary>
         /// Сохранение таблицы в Excel
         /// </summary>
-        public void SaveToExcel(ObservableCollection<SalesModel> listSalesModels)
+        public async Task SaveToExcel(ObservableCollection<SalesByYear> listSalesModels, string pathFile)
         {
             try
             {
-                var nameFile = "Продажи " + DateTime.Now.ToString("dd.MM.yyyy HH-mm") + ".xlsx";
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Excel.xlsx|*.xlsx";
-                saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.FileName = nameFile;
-                bool? result = saveFileDialog.ShowDialog();
-
-                if (result == null || result == false)
+                await Task.Run(() =>
                 {
-                    return;
-                }
+                    // Создание копии на момент экспорта
+                    var tempListSalesModels = new ObservableCollection<SalesByYear>(listSalesModels);
 
-                using (SpreadsheetDocument document = SpreadsheetDocument.Create(saveFileDialog.FileName, SpreadsheetDocumentType.Workbook))
-                {
-                    WorkbookPart workbookPart = document.AddWorkbookPart();
-                    workbookPart.Workbook = new Workbook();
-
-                    WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-                    worksheetPart.Worksheet = new Worksheet(new SheetData());
-
-                    WorkbookStylesPart workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
-
-                    // Добавляем в документ набор стилей
-                    workbookStylesPart.Stylesheet = CreateStyleForCell();
-                    workbookStylesPart.Stylesheet.Save();
-
-                    Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
-                    Sheet sheet = new Sheet()
+                    using (SpreadsheetDocument document = SpreadsheetDocument.Create(pathFile, SpreadsheetDocumentType.Workbook))
                     {
-                        Id = workbookPart.GetIdOfPart(worksheetPart),
-                        SheetId = 1,
-                        Name = "Лист1"
-                    };
-                    sheets.Append(sheet);
+                        WorkbookPart workbookPart = document.AddWorkbookPart();
+                        workbookPart.Workbook = new Workbook();
 
-                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>() ?? new SheetData();
+                        WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                        worksheetPart.Worksheet = new Worksheet(new SheetData());
 
-                    sheetData.AppendChild(CreateRowHeader(1));
+                        WorkbookStylesPart workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
 
-                    int i = 2;
-                    foreach (SalesModel salesModel in listSalesModels)
-                    {
-                        sheetData.AppendChild(CreateRow(i, salesModel));
-                        i++;
+                        // Добавляем в документ набор стилей
+                        workbookStylesPart.Stylesheet = CreateStyleForCell();
+                        workbookStylesPart.Stylesheet.Save();
+
+                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                        Sheet sheet = new Sheet()
+                        {
+                            Id = workbookPart.GetIdOfPart(worksheetPart),
+                            SheetId = 1,
+                            Name = "Лист1"
+                        };
+                        sheets.Append(sheet);
+
+                        SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>() ?? new SheetData();
+
+                        sheetData.AppendChild(CreateRowHeader(1));
+
+                        int i = 2;
+                        foreach (SalesByYear salesModel in tempListSalesModels)
+                        {
+                            sheetData.AppendChild(CreateRow(i, salesModel));
+                            i++;
+                        }
+
+                        workbookPart.Workbook.Save();
+
+                        GeneralMethods.ShowNotification("Экспорт в Excel завершен.");
                     }
-
-                    workbookPart.Workbook.Save();
-
-                    GeneralMethods.ShowNotification("Экспорт в Excel завершен.");
-                }
+                } );
             }
             catch (Exception ex)
             {
@@ -165,7 +157,7 @@ namespace SalesAnalysis.Services
         /// <param name="indexRow"></param>
         /// <param name="salesModel"></param>
         /// <returns></returns>
-        public Row CreateRow(int indexRow, SalesModel salesModel)
+        public Row CreateRow(int indexRow, SalesByYear salesModel)
         {
             Row row = new Row() { RowIndex = Convert.ToUInt32(indexRow) };
 

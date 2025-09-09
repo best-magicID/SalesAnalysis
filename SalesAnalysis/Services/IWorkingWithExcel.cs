@@ -12,6 +12,6 @@ namespace SalesAnalysis.Services
         /// Сохранение списка в Excel
         /// </summary>
         /// <param name="listSalesModels"></param>
-        void SaveToExcel(ObservableCollection<SalesModel> listSalesModels);
+        Task SaveToExcel(ObservableCollection<SalesByYear> listSalesModels, string pathFile);
     }
 }

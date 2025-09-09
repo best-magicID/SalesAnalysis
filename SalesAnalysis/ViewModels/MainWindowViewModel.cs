@@ -1,4 +1,5 @@
-﻿using SalesAnalysis.Data;
+﻿using Microsoft.Win32;
+using SalesAnalysis.Data;
 using SalesAnalysis.Helpers;
 using SalesAnalysis.Models;
 using SalesAnalysis.Services;
@@ -41,7 +42,7 @@ namespace SalesAnalysis.ViewModels
         /// <summary>
         /// Лист проданных моделей, на основе его отображается основная таблица с моделями
         /// </summary>
-        public ObservableCollection<SalesModel> ListSalesModels { get; set; } = [];
+        public ObservableCollection<SalesByYear> ListSalesModels { get; set; } = [];
 
         /// <summary>
         /// Список лет за которые продавались модели
@@ -196,10 +197,10 @@ namespace SalesAnalysis.ViewModels
 
             if (windowForAddNewModel_ViewModel.IsSave)
             {
-                using MyDbContext db = new MyDbContext();
+                using MyDbContext db = new ();
 
                 var newModel = new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
-                                        newPriceModel: windowForAddNewModel_ViewModel.PriceModel);
+                                         newPriceModel: windowForAddNewModel_ViewModel.PriceModel);
                 db.Models.Add(newModel);
                 db.SaveChanges();
 
@@ -317,16 +318,16 @@ namespace SalesAnalysis.ViewModels
             {
                 if (SelectedModel == null) // Добавление всех моделей в список
                 {
-                    ListSalesModels.Add(new SalesModel(model));
+                    ListSalesModels.Add(new SalesByYear(model));
                 }
                 else if (SelectedModel.IdModel == model.IdModel)
                 {
-                    ListSalesModels.Add(new SalesModel(model));
+                    ListSalesModels.Add(new SalesByYear(model));
                     break;
                 }
             }
 
-            foreach (SalesModel salesModel in ListSalesModels)
+            foreach (SalesByYear salesModel in ListSalesModels)
             {
                 foreach (DateSalesModel dateSalesModel in ListAllDatesSalesModels)
                 {
@@ -353,7 +354,7 @@ namespace SalesAnalysis.ViewModels
         /// <param name="salesModel"></param>
         /// <param name="salesByMonth"></param>
         /// <param name="dateSalesModel"></param>
-        public void AddInListDateSaleAndCalculatingSums(int numberMonth, SalesModel salesModel, SalesByMonth salesByMonth, DateSalesModel dateSalesModel)
+        public void AddInListDateSaleAndCalculatingSums(int numberMonth, SalesByYear salesModel, SalesByMonth salesByMonth, DateSalesModel dateSalesModel)
         {
             switch (numberMonth)
             {
@@ -481,9 +482,19 @@ namespace SalesAnalysis.ViewModels
         /// Сохранение в Excel
         /// </summary>
         /// <param name="listSalesModels"></param>
-        public void SaveToExcel(ObservableCollection<SalesModel> listSalesModels)
+        public void SaveToExcel(ObservableCollection<SalesByYear> listSalesModels)
         {
-            _iWorkingWithExcel?.SaveToExcel(listSalesModels);
+            SaveFileDialog saveFileDialog = new()
+            {
+                Filter = "Excel файлы|*.xlsx",
+                RestoreDirectory = true,
+                FileName = "Продажи " + DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss") + ".xlsx"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _iWorkingWithExcel?.SaveToExcel(listSalesModels, saveFileDialog.FileName);
+            }
         }
 
         /// <summary>
