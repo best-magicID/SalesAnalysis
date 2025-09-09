@@ -10,7 +10,7 @@ namespace SalesAnalysis.Models
         /// <summary>
         /// Месяц
         /// </summary>
-        public Month Month { get; set; }
+        public Months Month { get; set; }
 
         /// <summary>
         /// Лист с датами продаж 
@@ -21,7 +21,7 @@ namespace SalesAnalysis.Models
         public SalesByMonth(int newIdModel,
                             string newNameModel,
                             double newPriceModel,
-                            Month newMonth,
+                            Months newMonth,
                             DateSalesModel newDateSalesModels)
             : base(newIdModel, newNameModel, newPriceModel)
         {

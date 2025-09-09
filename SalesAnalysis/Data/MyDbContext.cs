@@ -14,9 +14,6 @@ namespace SalesAnalysis.Data
 
         public DbSet<DateSale> DatesSale { get; set; } = null!;
 
-        public DbSet<Month> Months { get; set; } = null!;
-
-
         //public MyDbContext(DbContextOptions<MyDbContext> options) 
         //    : base(options)
         //{

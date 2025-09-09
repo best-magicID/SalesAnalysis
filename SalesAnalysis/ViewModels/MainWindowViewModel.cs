@@ -37,7 +37,7 @@ namespace SalesAnalysis.ViewModels
         /// <summary>
         /// Лист месяцев полученный из БД
         /// </summary>
-        public List<Month> ListMonths { get; set; } = [];
+        public List<Months> ListMonths { get; set; } = [];
 
         /// <summary>
         /// Лист проданных моделей, на основе его отображается основная таблица с моделями
@@ -127,9 +127,9 @@ namespace SalesAnalysis.ViewModels
             {
                 LoadCommands();
                 _iWorkingWithExcel = newIWorkingWithExcel;
+                ListMonths = Enum.GetValues(typeof(Months)).Cast<Months>().ToList();
 
                 GetListYearsFromBd();
-                GetMonthsFromBd();
 
                 UpdateDataInTableForAllModels += GetModelsFromBd;
                 UpdateDataInTableForAllModels += GetDatesSalesModelsFromDb;
@@ -244,19 +244,6 @@ namespace SalesAnalysis.ViewModels
         }
 
         /// <summary>
-        /// Получение списка месяцев из БД
-        /// </summary>
-        public void GetMonthsFromBd()
-        {
-            using MyDbContext db = new();
-
-            var months = db.Months.ToList<Month>();
-
-            ListMonths.Clear();
-            months?.ForEach(x => ListMonths.Add(x));
-        }
-
-        /// <summary>
         /// Получить список лет, за которые продавались модели
         /// </summary>
         public void GetListYearsFromBd()
@@ -338,7 +325,7 @@ namespace SalesAnalysis.ViewModels
                         SalesByMonth salesByMonth = new SalesByMonth(newIdModel: dateSalesModel.IdModel,
                                                                      newNameModel: dateSalesModel.NameModel,
                                                                      newPriceModel: dateSalesModel.PriceModel,
-                                                                     newMonth: ListMonths.Single(month => month.IdMonth == numberMonth),
+                                                                     newMonth: ListMonths.Single(month => (int)month == numberMonth),
                                                                      newDateSalesModels: dateSalesModel);
 
                         AddInListDateSaleAndCalculatingSums(numberMonth, salesModel, salesByMonth, dateSalesModel);

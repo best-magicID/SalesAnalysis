@@ -1,7 +1,7 @@
 ﻿namespace SalesAnalysis.Models
 {
     /// <summary>
-    /// Дата продажи модели
+    /// Дата продажи модели (наследуется от Model)
     /// </summary>
     public class DateSalesModel : Model
     {

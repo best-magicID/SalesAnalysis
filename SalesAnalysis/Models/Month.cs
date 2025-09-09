@@ -1,25 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SalesAnalysis.Models
+﻿namespace SalesAnalysis.Models
 {
     /// <summary>
-    /// Месяц
+    /// Месяцы года
     /// </summary>
-    public class Month
+    public enum Months
     {
-        #region ПОЛЯ И СВОЙСТВА
-
-        /// <summary>
-        /// Id месяца
-        /// </summary>
-        [Key]
-        public int IdMonth { get; set; }
-
-        /// <summary>
-        /// Название месяца
-        /// </summary>
-        public string NameMonth { get; set; } = string.Empty;
-
-        #endregion
+        January = 1,
+        February = 2,
+        March = 3,
+        April = 4,
+        May = 5,
+        June = 6,
+        July = 7,
+        August = 8,
+        September = 9,
+        October = 10,
+        November = 11,
+        December = 12, 
+        Unknown = 13
     }
 }
