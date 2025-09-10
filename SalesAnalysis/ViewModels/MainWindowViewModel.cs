@@ -25,6 +25,13 @@ namespace SalesAnalysis.ViewModels
         private readonly IWorkingWithExcel? _iWorkingWithExcel;
 
         /// <summary>
+        /// Работа с БД
+        /// </summary>
+        private readonly IOperationsDb? _iOperationsDb;
+
+        private readonly IWindowFactory? _iWindowFactory;
+
+        /// <summary>
         /// Лист моделей полученных из БД
         /// </summary>
         public ObservableCollection<Model> ListModels { get; set; } = [];
@@ -121,13 +128,19 @@ namespace SalesAnalysis.ViewModels
 
         }
 
-        public MainWindowViewModel(IWorkingWithExcel newIWorkingWithExcel)
+        public MainWindowViewModel(IWorkingWithExcel newIWorkingWithExcel, 
+                                   IOperationsDb newIOperationsDb, 
+                                   IWindowFactory newIWindowFactory)
         {
+            _iOperationsDb = newIOperationsDb;
+
             if (CheckConnect())
             {
-                LoadCommands();
                 _iWorkingWithExcel = newIWorkingWithExcel;
+                _iWindowFactory = newIWindowFactory;
+
                 ListMonths = Enum.GetValues(typeof(Months)).Cast<Months>().ToList();
+                LoadCommands();
 
                 GetListYearsFromBd();
 
@@ -167,18 +180,7 @@ namespace SalesAnalysis.ViewModels
         /// <returns></returns>
         public bool CheckConnect()
         {
-            bool isConnect = false;
-            try
-            {
-                using MyDbContext db = new();
-
-                isConnect = db.Database.CanConnect();
-            }
-            catch (Exception ex)
-            {
-                GeneralMethods.ShowNotification("Нет доступа к БД.\r\n\r\nОшибка: " + ex.Message);
-            }
-            return isConnect;
+            return _iOperationsDb?.CheckConnect() ?? false;
         }
 
         /// <summary>
@@ -188,14 +190,13 @@ namespace SalesAnalysis.ViewModels
         /// <param name="price"></param>
         public void AddModelInBd(string? name = "", string? price = "")
         {
-            WindowForAddNewModel_ViewModel windowForAddNewModel_ViewModel = new ();
-            WindowForAddNewModel_View windowForAddNewModel = new()
-            {
-                DataContext = windowForAddNewModel_ViewModel
-            };
-            windowForAddNewModel.ShowDialog();
+            WindowForAddNewModel_View WindowForAddNewModel_View = _iWindowFactory.CreateWindow<WindowForAddNewModel_View, WindowForAddNewModel_ViewModel>();
+            
+            WindowForAddNewModel_View.ShowDialog();
 
-            if (windowForAddNewModel_ViewModel.IsSave)
+            var windowForAddNewModel_ViewModel = WindowForAddNewModel_View.DataContext as WindowForAddNewModel_ViewModel;
+
+            if (windowForAddNewModel_ViewModel?.IsSave ?? false)
             {
                 using MyDbContext db = new ();
 
@@ -235,12 +236,10 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetModelsFromBd()
         {
-            using MyDbContext db = new();
-
-            List<Model> listModel = SelectedModel == null ? db.Models.ToList<Model>() : db.Models.Where(x => x.IdModel == SelectedModel.IdModel).ToList<Model>();
+            var tempList = _iOperationsDb?.GetModelsFromBd(SelectedModel);
 
             ListModels.Clear();
-            listModel.ForEach(x => ListModels.Add(x));
+            tempList?.ForEach(x => ListModels.Add(x));
         }
 
         /// <summary>
@@ -248,16 +247,17 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetListYearsFromBd()
         {
-            using MyDbContext db = new();
+            var listYears = _iOperationsDb?.GetListYearsFromBd();
 
-            var years = db.DatesSale.Select(x => x.DateSaleModel.ToString("yyyy")).ToList().Distinct().ToList();
-
-            ListYears.Clear();
-            years.ForEach(x => ListYears.Add(int.Parse(x)));
-
-            if (ListYears.Count > 0)
+            if (listYears != null)
             {
-                SelectedYear = ListYears.FirstOrDefault();
+                ListYears.Clear();
+                listYears.ForEach(x => ListYears.Add(x));
+
+                if (ListYears.Count > 0)
+                {
+                    SelectedYear = ListYears.FirstOrDefault();
+                }
             }
         }
 
@@ -276,22 +276,10 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetDatesSalesModelsFromDb()
         {
-            using MyDbContext db = new();
-
-            var data = (from tModels in (SelectedModel == null ? db.Models : db.Models.Where(x => x.IdModel == SelectedModel.IdModel))
-                        join tDatesSale in db.DatesSale on tModels.IdModel equals tDatesSale.IdModel
-                        where tDatesSale.DateSaleModel.Year == SelectedYear
-                        select new DateSalesModel(tModels.IdModel,
-                                                  tModels.NameModel,
-                                                  tModels.PriceModel,
-                                                  tDatesSale.IdDateSale,
-                                                  tDatesSale.DateSaleModel,
-                                                  tDatesSale.CountSoldModels))
-                                                  .ToList();
+            var tempList = _iOperationsDb?.GetDatesSalesModelsFromDb(SelectedModel, SelectedYear);
 
             ListAllDatesSalesModels.Clear();
-
-            data?.ForEach(x => ListAllDatesSalesModels.Add(x));
+            tempList?.ForEach(x => ListAllDatesSalesModels.Add(x));
         }
 
         /// <summary>
@@ -514,22 +502,22 @@ namespace SalesAnalysis.ViewModels
         }
 
         /// <summary>
-        /// Добавить новую дату продаж в БД
+        /// Добавление новой даты продажи в БД
         /// </summary>
         public void AddDatSaleInDb()
         {
-            using MyDbContext myDbContext = new ();
-            var listModels = myDbContext.Models.ToList<Model>();
+            var listModels = _iOperationsDb?.GetModelsFromBd(null);
 
-            WindowForAddingDateSaleViewModel windowForAddingDateSaleViewModel = new(listModels);
-            WindowForAddingDateSaleView windowForAddingDateSale = new()
-            {
-                DataContext = windowForAddingDateSaleViewModel
-            };
-            windowForAddingDateSale.ShowDialog();
+            WindowForAddingDateSaleView windowForAddingDateSaleView = _iWindowFactory.CreateWindow<WindowForAddingDateSaleView, WindowForAddingDateSaleViewModel>(listModels);
 
-            if (windowForAddingDateSaleViewModel.IsSave)
+            windowForAddingDateSaleView.ShowDialog();
+
+            var windowForAddingDateSaleViewModel = windowForAddingDateSaleView.DataContext as WindowForAddingDateSaleViewModel;
+
+            if (windowForAddingDateSaleViewModel?.IsSave ?? false)
             {
+                /// изменить на использование IOperationsDb
+                MyDbContext myDbContext = new();
                 myDbContext.DatesSale.Add(windowForAddingDateSaleViewModel.NewDateSale);
                 myDbContext.SaveChanges();
             }

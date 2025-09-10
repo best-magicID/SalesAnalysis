@@ -1,8 +1,9 @@
-﻿using SalesAnalysis.ViewModels;
-using System.Windows;
-using SalesAnalysis.Views;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SalesAnalysis.Data;
 using SalesAnalysis.Services;
+using SalesAnalysis.ViewModels;
+using SalesAnalysis.Views;
+using System.Windows;
 
 namespace SalesAnalysis
 {
@@ -18,9 +19,18 @@ namespace SalesAnalysis
         {
             var services = new ServiceCollection();
 
+            // DbContext и сервисы
+            services.AddDbContext<MyDbContext>();
+            services.AddScoped<IOperationsDb, OperationsDb>();
+
             services.AddSingleton<IWorkingWithExcel, WorkingWithExcel>();
-            services.AddSingleton<MainWindowView>();
-            services.AddSingleton<MainWindowViewModel>();
+
+            // View и ViewModel
+            services.AddTransient<MainWindowView>();
+            services.AddTransient<MainWindowViewModel>();
+
+            // Фабрика окон
+            services.AddSingleton<IWindowFactory, WindowFactory>();
 
             _serviceProvider = services.BuildServiceProvider();
         }
@@ -30,8 +40,9 @@ namespace SalesAnalysis
         {
             base.OnStartup(e);
 
-            MainWindowView mainWindowView = _serviceProvider.GetRequiredService<MainWindowView>();
-            mainWindowView.DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+            var windowFactory = _serviceProvider.GetRequiredService<IWindowFactory>();
+
+            MainWindowView mainWindowView = windowFactory.CreateWindow<MainWindowView, MainWindowViewModel>();
 
             mainWindowView.Show();
         }
