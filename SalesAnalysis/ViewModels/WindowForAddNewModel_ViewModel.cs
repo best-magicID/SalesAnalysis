@@ -1,4 +1,6 @@
-﻿namespace SalesAnalysis.ViewModels
+﻿using SalesAnalysis.Commands;
+
+namespace SalesAnalysis.ViewModels
 {
     public class WindowForAddNewModel_ViewModel : BaseViewModel
     {

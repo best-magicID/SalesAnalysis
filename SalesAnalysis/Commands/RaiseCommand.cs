@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace SalesAnalysis.ViewModels
+namespace SalesAnalysis.Commands
 {
     /// <summary>
     /// Вызов команды
