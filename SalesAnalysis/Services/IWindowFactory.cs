@@ -9,8 +9,8 @@ namespace SalesAnalysis.Services
             where TViewModel : class;
 
         TWindow CreateWindow<TWindow, TViewModel>(params object[] parameters)
-        where TWindow : Window
-        where TViewModel : class;
+            where TWindow : Window
+            where TViewModel : class;
 
     }
 }

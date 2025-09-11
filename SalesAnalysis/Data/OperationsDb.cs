@@ -6,7 +6,7 @@ namespace SalesAnalysis.Data
     /// <summary>
     /// Операции с БД
     /// </summary>
-    public class OperationsDb : IOperationsDb
+    public class OperationsDb : IGetDataFromDb, IChangingDataInDb
     {
         private readonly MyDbContext _myDbContext;
 
@@ -51,8 +51,6 @@ namespace SalesAnalysis.Data
         /// </summary>
         public List<Model> GetModelsFromBd(Model? selectedModel)
         {
-            using MyDbContext db = new();
-
             List<Model> listModel = selectedModel == null ? _myDbContext.Models.ToList<Model>() : _myDbContext.Models.Where(x => x.IdModel == selectedModel.IdModel).ToList<Model>();
 
             return listModel;
@@ -75,5 +73,70 @@ namespace SalesAnalysis.Data
                                                   .ToList();
             return data;
         }
+
+        /// <summary>
+        /// Добавление новой модели в БД
+        /// </summary>
+        public async Task AddModelInBd(Model model)
+        {
+            await Task.Run(() =>
+            {
+                _myDbContext.Models.Add(model);
+                _myDbContext.SaveChanges();
+
+                GeneralMethods.ShowNotification($"Модель '{model.NameModel}' успешно добавлена в БД.");
+            });
+        }
+
+        /// <summary>
+        /// Удаление модели из БД
+        /// </summary>
+        public async Task DeleteModelInBd(Model model)
+        {
+            await Task.Run(() =>
+            {
+                _myDbContext.Models.Remove(model);
+                _myDbContext.SaveChanges();
+
+                GeneralMethods.ShowNotification($"Модель '{model.NameModel}' успешно удалена из БД.");
+            });
+        }
+
+        /// <summary>
+        /// Добавление новой даты продажи в БД
+        /// </summary>
+        public async Task AddDatSaleInDb(DateSale dateSale)
+        {
+            await Task.Run(() =>
+            {
+                _myDbContext.DatesSale.Add(dateSale);
+                _myDbContext.SaveChanges();
+
+                GeneralMethods.ShowNotification($"Добавлена дата продажи модели '{dateSale.DateSaleModel.ToShortDateString()}' в БД.");
+            });
+        }
+
+        /// <summary>
+        /// Создание строк с датами продаж (Тестовые данные)
+        /// </summary>
+        public async Task CreateRecordsInBd()
+        {
+            await Task.Run(() =>
+            {
+                Random random = new();
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    _myDbContext.DatesSale.Add(new DateSale()
+                    {
+                        DateSaleModel = DateTime.Now.Date.AddDays(-i),
+                        IdModel = random.Next(1, 8),
+                        CountSoldModels = random.Next(0, 10)
+                    });
+                }
+                _myDbContext.SaveChanges();
+            });
+        }
+
     }
 }

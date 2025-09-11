@@ -1,9 +1,8 @@
 ﻿using SalesAnalysis.Models;
-using System.Collections.ObjectModel;
 
 namespace SalesAnalysis.Data
 {
-    public interface IOperationsDb
+    public interface IGetDataFromDb
     {
         /// <summary>
         /// Проверка соединения с БД
@@ -22,7 +21,7 @@ namespace SalesAnalysis.Data
         List<Model> GetModelsFromBd(Model? selectedModel);
 
         /// <summary>
-        /// Получение дат продаж моделей из БД за выбранный год
+        /// Получение списка "Дат продаж моделей" из БД за выбранный год
         /// </summary>
         List<DateSalesModel> GetDatesSalesModelsFromDb(Model? selectedModel, int selectedYear);
     }

@@ -25,11 +25,20 @@ namespace SalesAnalysis.ViewModels
         private readonly IWorkingWithExcel? _iWorkingWithExcel;
 
         /// <summary>
-        /// Работа с БД
+        /// Получение данных из БД
         /// </summary>
-        private readonly IOperationsDb? _iOperationsDb;
+        private readonly IGetDataFromDb? _iGetDataFromDb;
 
+        /// <summary>
+        /// Получение данных из БД
+        /// </summary>
+        private readonly IChangingDataInDb? _iChangingDataInDb;
+
+        /// <summary>
+        /// Создание окон
+        /// </summary>
         private readonly IWindowFactory? _iWindowFactory;
+
 
         /// <summary>
         /// Лист моделей полученных из БД
@@ -56,6 +65,18 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public ObservableCollection<int> ListYears { get; set; } = [];
 
+
+        /// <summary>
+        /// Загрузка данных из БД для всех моделей 
+        /// </summary>
+        public LoadDataFromBD? UpdateDataInTableForAllModels;
+
+        /// <summary>
+        /// Загрузка данных из БД для конкретной модели
+        /// </summary>
+        public LoadDataFromBD? UpdateDataInTableForSelectedModel;
+
+
         /// <summary>
         /// Выбранный год за который показать список моделей
         /// </summary>
@@ -79,16 +100,6 @@ namespace SalesAnalysis.ViewModels
         private int _SelectedYear { get; set; }
 
         /// <summary>
-        /// Загрузка данных из БД для всех моделей 
-        /// </summary>
-        public LoadDataFromBD? UpdateDataInTableForAllModels;
-
-        /// <summary>
-        /// Загрузка данных из БД для конкретной модели
-        /// </summary>
-        public LoadDataFromBD? UpdateDataInTableForSelectedModel;
-
-        /// <summary>
         /// Выбранная модель
         /// </summary>
         public Model? SelectedModel
@@ -106,6 +117,7 @@ namespace SalesAnalysis.ViewModels
         }
         private Model? _SelectedModel;
 
+        #endregion
 
         #region КОМАНДЫ
 
@@ -118,9 +130,6 @@ namespace SalesAnalysis.ViewModels
 
         #endregion
 
-        #endregion
-
-
         #region КОНСТРУКТОР
 
         public MainWindowViewModel()
@@ -129,13 +138,15 @@ namespace SalesAnalysis.ViewModels
         }
 
         public MainWindowViewModel(IWorkingWithExcel newIWorkingWithExcel, 
-                                   IOperationsDb newIOperationsDb, 
+                                   IGetDataFromDb newIOperationsDb,
+                                   IChangingDataInDb newIChangingDataInDb,
                                    IWindowFactory newIWindowFactory)
         {
-            _iOperationsDb = newIOperationsDb;
+            _iGetDataFromDb = newIOperationsDb;
 
             if (CheckConnect())
             {
+                _iChangingDataInDb = newIChangingDataInDb;
                 _iWorkingWithExcel = newIWorkingWithExcel;
                 _iWindowFactory = newIWindowFactory;
 
@@ -165,7 +176,7 @@ namespace SalesAnalysis.ViewModels
         public void LoadCommands()
         {
             AddModelCommand = new RaiseCommand(AddModelCommand_Execute);
-            DeleteModelCommand = new RaiseCommand(DeleteModelCommand_Execute);
+            DeleteModelCommand = new RaiseCommand(DeleteModelCommand_Execute, DeleteModelCommand_CanExecute);
 
             ShowAllModelsCommand = new RaiseCommand(ShowAllModelsCommand_Execute);
 
@@ -180,7 +191,7 @@ namespace SalesAnalysis.ViewModels
         /// <returns></returns>
         public bool CheckConnect()
         {
-            return _iOperationsDb?.CheckConnect() ?? false;
+            return _iGetDataFromDb?.CheckConnect() ?? false;
         }
 
         /// <summary>
@@ -188,22 +199,24 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         /// <param name="name"></param>
         /// <param name="price"></param>
-        public void AddModelInBd(string? name = "", string? price = "")
+        public void AddModelInBd()
         {
+            if(_iWindowFactory is null)
+            {
+                return;
+            }
+
             WindowForAddNewModel_View WindowForAddNewModel_View = _iWindowFactory.CreateWindow<WindowForAddNewModel_View, WindowForAddNewModel_ViewModel>();
-            
             WindowForAddNewModel_View.ShowDialog();
 
             var windowForAddNewModel_ViewModel = WindowForAddNewModel_View.DataContext as WindowForAddNewModel_ViewModel;
 
             if (windowForAddNewModel_ViewModel?.IsSave ?? false)
             {
-                using MyDbContext db = new ();
-
                 var newModel = new Model(newNameModel: windowForAddNewModel_ViewModel.NameModel,
                                          newPriceModel: windowForAddNewModel_ViewModel.PriceModel);
-                db.Models.Add(newModel);
-                db.SaveChanges();
+
+                _iChangingDataInDb?.AddModelInBd(newModel);
 
                 ListModels.Add(newModel);
             }
@@ -214,16 +227,15 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         /// <param name="text"></param>
         /// <param name="model"></param>
-        public void DeleteModelInBd(string text, Model model)
+        public void DeleteModelInBd(Model model)
         {
+            string text = "Удалить: " + model.NameModel + "?";
+
             if (GeneralMethods.ShowSelectionWindow(text) == MessageBoxResult.Yes)
             {
                 SelectedModel = null;
 
-                using MyDbContext db = new();
-
-                db.Models.Remove(model);
-                db.SaveChanges();
+                _iChangingDataInDb?.DeleteModelInBd(model);
 
                 ListModels.Remove(model);
 
@@ -236,7 +248,7 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetModelsFromBd()
         {
-            var tempList = _iOperationsDb?.GetModelsFromBd(SelectedModel);
+            var tempList = _iGetDataFromDb?.GetModelsFromBd(SelectedModel);
 
             ListModels.Clear();
             tempList?.ForEach(x => ListModels.Add(x));
@@ -247,17 +259,14 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetListYearsFromBd()
         {
-            var listYears = _iOperationsDb?.GetListYearsFromBd();
+            var listYears = _iGetDataFromDb?.GetListYearsFromBd();
 
-            if (listYears != null)
+            ListYears.Clear();
+            listYears?.ForEach(x => ListYears.Add(x));
+
+            if (ListYears.Count > 0)
             {
-                ListYears.Clear();
-                listYears.ForEach(x => ListYears.Add(x));
-
-                if (ListYears.Count > 0)
-                {
-                    SelectedYear = ListYears.FirstOrDefault();
-                }
+                SelectedYear = ListYears.FirstOrDefault();
             }
         }
 
@@ -276,7 +285,7 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void GetDatesSalesModelsFromDb()
         {
-            var tempList = _iOperationsDb?.GetDatesSalesModelsFromDb(SelectedModel, SelectedYear);
+            var tempList = _iGetDataFromDb?.GetDatesSalesModelsFromDb(SelectedModel, SelectedYear);
 
             ListAllDatesSalesModels.Clear();
             tempList?.ForEach(x => ListAllDatesSalesModels.Add(x));
@@ -430,8 +439,13 @@ namespace SalesAnalysis.ViewModels
             SelectedModel = null;
 
             UpdateDataInTableForAllModels?.Invoke();
+            GeneralMethods.ShowNotification("Данные обновлены.");
         }
 
+        private bool DeleteModelCommand_CanExecute(object parameter)
+        {
+            return SelectedModel != null;
+        }
 
         /// <summary>
         /// Удаление модели
@@ -440,8 +454,7 @@ namespace SalesAnalysis.ViewModels
         {
             if (SelectedModel != null)
             {
-                string text = "Удалить: " + SelectedModel.NameModel;
-                DeleteModelInBd(text, SelectedModel);
+                DeleteModelInBd(SelectedModel);
             }
         }
 
@@ -473,27 +486,6 @@ namespace SalesAnalysis.ViewModels
         }
 
         /// <summary>
-        /// Создание строк с датами продаж (Тестовые данные)
-        /// </summary>
-        public void CreateRecordsInBd()
-        {
-            using MyDbContext db = new();
-
-            Random random = new Random();
-
-            for (int i = 0; i < 1000; i++)
-            {
-                db.DatesSale.Add(new DateSale()
-                {
-                    DateSaleModel = DateTime.Now.Date.AddDays(-i),
-                    IdModel = random.Next(1, 8),
-                    CountSoldModels = random.Next(0, 10)
-                });
-            }
-            db.SaveChanges();
-        }
-
-        /// <summary>
         /// Выполнить команду "Добавление даты продаж"
         /// </summary>
         private void AddDateSaleCommand_Execute(object parameter)
@@ -506,7 +498,17 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void AddDatSaleInDb()
         {
-            var listModels = _iOperationsDb?.GetModelsFromBd(null);
+            if (_iWindowFactory is null)
+            {
+                return;
+            }
+
+            var listModels = _iGetDataFromDb?.GetModelsFromBd(null);
+            if (listModels == null)
+            {
+                GeneralMethods.ShowNotification("Ошибка получения списка моделей из БД.");
+                return;
+            }
 
             WindowForAddingDateSaleView windowForAddingDateSaleView = _iWindowFactory.CreateWindow<WindowForAddingDateSaleView, WindowForAddingDateSaleViewModel>(listModels);
 
@@ -516,10 +518,7 @@ namespace SalesAnalysis.ViewModels
 
             if (windowForAddingDateSaleViewModel?.IsSave ?? false)
             {
-                /// изменить на использование IOperationsDb
-                MyDbContext myDbContext = new();
-                myDbContext.DatesSale.Add(windowForAddingDateSaleViewModel.NewDateSale);
-                myDbContext.SaveChanges();
+                _iChangingDataInDb?.AddDatSaleInDb(windowForAddingDateSaleViewModel.NewDateSale);
             }
         }
 

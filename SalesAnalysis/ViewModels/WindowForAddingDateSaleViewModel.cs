@@ -14,7 +14,7 @@ namespace SalesAnalysis.ViewModels
         public Model? SelectedModel { get; set; }
 
         /// <summary>
-        /// Новая дата продажи
+        /// Новый экземпляр класса "Дата продажи"
         /// </summary>
         public DateSale NewDateSale { get; set; } = new DateSale();
 
@@ -24,12 +24,12 @@ namespace SalesAnalysis.ViewModels
         public ObservableCollection<Model> ListModels { get; set; } = new ObservableCollection<Model>();
 
         /// <summary>
-        /// Количество проданных моделей (Не стал ставить условие от 0, вдруг надо будет делать возврат
+        /// Количество проданных моделей (Не стал ставить условие от 0, вдруг надо будет делать возврат)
         /// </summary>
         public int CountModels { get; set; }
 
         /// <summary>
-        /// Новая дата продажи
+        /// Дата
         /// </summary>
         public DateTime NewDate { get; set; } = DateTime.Now;
 
@@ -52,11 +52,11 @@ namespace SalesAnalysis.ViewModels
 
         }
 
-        public WindowForAddingDateSaleViewModel(List<Model> newListModels)
+        public WindowForAddingDateSaleViewModel(List<Model>? newListModels)
         {
-            newListModels.ForEach(x => ListModels.Add(x));
+            newListModels?.ForEach(x => ListModels.Add(x));
 
-            SaveDateSaleCommand = new RaiseCommand(SaveDateSaleCommand_Execute);
+            SaveDateSaleCommand = new RaiseCommand(SaveDateSaleCommand_Execute, SaveDateSaleCommand_CanExecute);
         }
 
         #endregion
@@ -75,9 +75,7 @@ namespace SalesAnalysis.ViewModels
                 NewDateSale.DateSaleModel = NewDate;
                 NewDateSale.CountSoldModels = CountModels;
 
-                IsSave = true;
-
-                return true;
+                return IsSave = true;
             }
             return false;
         }
@@ -96,6 +94,14 @@ namespace SalesAnalysis.ViewModels
             {
                 GeneralMethods.ShowNotification("Выберите модель");
             }
+        }
+
+        /// <summary>
+        /// Выполнить команду, "Сохранить дату продажи"
+        /// </summary>
+        private bool SaveDateSaleCommand_CanExecute(object parameter)
+        {
+            return SelectedModel != null && CountModels >= 0;
         }
 
         /// <summary>

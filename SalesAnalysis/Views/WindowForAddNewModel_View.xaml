@@ -33,7 +33,7 @@
         <TextBox Grid.Column="1"
                  Grid.Row="0"
                  Margin="5"
-                 Text="{Binding NameModel}"/>
+                 Text="{Binding NameModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Text="Стоимость модели"
                    Grid.Column="0"
@@ -42,7 +42,7 @@
         <TextBox Grid.Column="1"
                  Grid.Row="1"
                  Margin="5"
-                 Text="{Binding PriceModel}"/>
+                 Text="{Binding PriceModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Button Name="ButtonForSaveModel" 
                 Grid.Column="1"

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
 namespace SalesAnalysis.Services
@@ -16,8 +17,14 @@ namespace SalesAnalysis.Services
             where TWindow : Window
             where TViewModel : class
         {
-            var window = _serviceProvider.GetRequiredService<TWindow>();
-            var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+
+            // если окно не зарегистрировано, создаём через new()
+            var window = _serviceProvider.GetService<TWindow>() ?? Activator.CreateInstance<TWindow>();
+
+            var viewModel = ActivatorUtilities.CreateInstance<TViewModel>(_serviceProvider);
+
+            //var window = _serviceProvider.GetRequiredService<TWindow>();
+            //var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
 
             window.DataContext = viewModel;
             return window;
@@ -27,7 +34,7 @@ namespace SalesAnalysis.Services
             where TWindow : Window
             where TViewModel : class
         {
-            var window = _serviceProvider.GetRequiredService<TWindow>();
+            var window = _serviceProvider.GetService<TWindow>() ?? Activator.CreateInstance<TWindow>();
 
             // создаём VM вручную, передаём параметры
             var viewModel = ActivatorUtilities.CreateInstance<TViewModel>(_serviceProvider, parameters);

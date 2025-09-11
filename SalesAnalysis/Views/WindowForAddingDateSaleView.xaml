@@ -37,7 +37,7 @@
                   IsEditable="True"
                   ItemsSource="{Binding ListModels}"
                   DisplayMemberPath="NameModel"
-                  SelectedItem="{Binding SelectedModel}"/>
+                  SelectedItem="{Binding SelectedModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Text="Дата продажи"
                    Grid.Column="0"
@@ -46,7 +46,7 @@
         <DatePicker Grid.Column="1"
                     Grid.Row="1"
                     Margin="5"
-                    SelectedDate="{Binding NewDate}"/>
+                    SelectedDate="{Binding NewDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Text="Количетсво моделей"
                    Grid.Column="0"
@@ -55,7 +55,7 @@
         <TextBox Grid.Column="1"
                  Grid.Row="2"
                  Margin="5"
-                 Text="{Binding CountModels}"/>
+                 Text="{Binding CountModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Button Name="ButtonForSaveDateSale" 
                 Margin="10"

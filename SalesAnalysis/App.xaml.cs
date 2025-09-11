@@ -21,7 +21,8 @@ namespace SalesAnalysis
 
             // DbContext и сервисы
             services.AddDbContext<MyDbContext>();
-            services.AddScoped<IOperationsDb, OperationsDb>();
+            services.AddScoped<IGetDataFromDb, OperationsDb>();
+            services.AddScoped<IChangingDataInDb, OperationsDb>();
 
             services.AddSingleton<IWorkingWithExcel, WorkingWithExcel>();
 

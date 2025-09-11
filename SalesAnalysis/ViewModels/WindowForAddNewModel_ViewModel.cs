@@ -41,7 +41,7 @@
 
         public WindowForAddNewModel_ViewModel()
         {
-            SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute);
+            SaveModelCommand = new RaiseCommand(SaveModelCommand_Execute, SaveModelCommand_CanExecute);
         }
 
         #endregion
@@ -58,6 +58,15 @@
             IsSave = true;
 
             OnClose();
+        }
+
+        /// <summary>
+        /// Выполнить команду, сохранить модель
+        /// </summary>
+        /// <param name="parameter"></param>
+        private bool SaveModelCommand_CanExecute(object parameter)
+        {
+            return NameModel != string.Empty && PriceModel >= 0;
         }
 
         /// <summary>
