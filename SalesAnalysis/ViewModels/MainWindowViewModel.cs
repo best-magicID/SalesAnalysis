@@ -87,6 +87,7 @@ namespace SalesAnalysis.ViewModels
             set
             {
                 _SelectedYear = value;
+                OnPropertyChanged();
 
                 if (SelectedModel == null)
                 {

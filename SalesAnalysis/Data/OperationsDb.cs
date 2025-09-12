@@ -125,7 +125,7 @@ namespace SalesAnalysis.Data
             {
                 Random random = new();
 
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 50000; i++)
                 {
                     _myDbContext.DatesSale.Add(new DateSale()
                     {

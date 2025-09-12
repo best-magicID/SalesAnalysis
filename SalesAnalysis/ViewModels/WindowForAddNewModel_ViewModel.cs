@@ -24,7 +24,7 @@ namespace SalesAnalysis.ViewModels
             get => _PriceModel;
             set => SetProperty(ref _PriceModel, value);
         }
-        public double _PriceModel;
+        private double _PriceModel;
 
         /// <summary>
         /// Флаг, сохранение данных
