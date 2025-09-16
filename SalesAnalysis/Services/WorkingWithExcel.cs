@@ -165,41 +165,41 @@ namespace SalesAnalysis.Services
             row.AppendChild(CreateCell("B", row, salesModel.IdModel.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("C", row, salesModel.NameModel, CellValues.String));
 
-            row.AppendChild(CreateCell("D", row, salesModel.TotalAmountForJanuary.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("E", row, salesModel.TotalCostForJanuary.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("D", row, salesModel.ArrAllTotalAmounts[0].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("E", row, salesModel.ArrAllTotalCosts[0].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("F", row, salesModel.TotalAmountForFebruary.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("G", row, salesModel.TotalCostForFebruary.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("F", row, salesModel.ArrAllTotalAmounts[1].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("G", row, salesModel.ArrAllTotalCosts[1].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("H", row, salesModel.TotalAmountForMarch.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("I", row, salesModel.TotalCostForMarch.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("H", row, salesModel.ArrAllTotalAmounts[2].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("I", row, salesModel.ArrAllTotalCosts[2].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("J", row, salesModel.TotalAmountForApril.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("K", row, salesModel.TotalCostForApril.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("J", row, salesModel.ArrAllTotalAmounts[3].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("K", row, salesModel.ArrAllTotalCosts[3].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("L", row, salesModel.TotalAmountForMay.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("M", row, salesModel.TotalCostForMay.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("L", row, salesModel.ArrAllTotalAmounts[4].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("M", row, salesModel.ArrAllTotalCosts[4].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("N", row, salesModel.TotalAmountForJune.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("O", row, salesModel.TotalCostForJune.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("N", row, salesModel.ArrAllTotalAmounts[5].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("O", row, salesModel.ArrAllTotalCosts[5].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("P", row, salesModel.TotalAmountForJuly.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("Q", row, salesModel.TotalCostForJuly.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("P", row, salesModel.ArrAllTotalAmounts[6].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("Q", row, salesModel.ArrAllTotalCosts[6].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("R", row, salesModel.TotalAmountForAugust.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("S", row, salesModel.TotalCostForAugust.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("R", row, salesModel.ArrAllTotalAmounts[7].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("S", row, salesModel.ArrAllTotalCosts[7].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("T", row, salesModel.TotalAmountForSeptember.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("U", row, salesModel.TotalCostForSeptember.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("T", row, salesModel.ArrAllTotalAmounts[8].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("U", row, salesModel.ArrAllTotalCosts[8].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("V", row, salesModel.TotalAmountForOctober.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("W", row, salesModel.TotalCostForOctober.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("V", row, salesModel.ArrAllTotalAmounts[9].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("W", row, salesModel.ArrAllTotalCosts[9].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("X", row, salesModel.TotalAmountForNovember.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("Y", row, salesModel.TotalCostForNovember.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("X", row, salesModel.ArrAllTotalAmounts[10].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("Y", row, salesModel.ArrAllTotalCosts[10].ToString(), CellValues.Number));
 
-            row.AppendChild(CreateCell("Z", row, salesModel.TotalAmountForDecember.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("AA", row, salesModel.TotalCostForDecember.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("Z", row, salesModel.ArrAllTotalAmounts[11].ToString(), CellValues.Number));
+            row.AppendChild(CreateCell("AA", row, salesModel.ArrAllTotalCosts[11].ToString(), CellValues.Number));
 
             row.AppendChild(CreateCell("AB", row, salesModel.TotalAmountForYear.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("AC", row, salesModel.TotalCostForYear.ToString(), CellValues.Number));

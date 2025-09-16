@@ -8,64 +8,22 @@ namespace SalesAnalysis.Models
     public class SalesByYear : Model
     {
         /// <summary>
-        /// Общее количество проданных моделей за Январь
+        /// Массив из 12 листов с продажами за каждый месяц
         /// </summary>
-        public int TotalAmountForJanuary { get; set; }
-        /// <summary>
-        /// Общая сумма за все проданные модели за Январь
-        /// </summary>
-        public double TotalCostForJanuary { get; set; }
-        /// <summary>
-        /// Лист с датами продаж за Январь
-        /// </summary>
-        public ObservableCollection<SalesByMonth> ListSaleForJanuary { get; set; } = [];
-
-        public int TotalAmountForFebruary { get; set; }
-        public double TotalCostForFebruary { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForFebruary { get; set; } = [];
-
-        public int TotalAmountForMarch { get; set; }
-        public double TotalCostForMarch { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForMarch { get; set; } = [];
-
-        public int TotalAmountForApril { get; set; }
-        public double TotalCostForApril { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForApril { get; set; } = [];
-
-        public int TotalAmountForMay { get; set; }
-        public double TotalCostForMay { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForMay { get; set; } = [];
-
-        public int TotalAmountForJune { get; set; }
-        public double TotalCostForJune { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForJune { get; set; } = [];
-
-        public int TotalAmountForJuly { get; set; }
-        public double TotalCostForJuly { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForJuly { get; set; } = [];
-
-        public int TotalAmountForAugust { get; set; }
-        public double TotalCostForAugust { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForAugust { get; set; } = [];
-
-        public int TotalAmountForSeptember { get; set; }
-        public double TotalCostForSeptember { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForSeptember { get; set; } = [];
-
-        public int TotalAmountForOctober { get; set; }
-        public double TotalCostForOctober { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForOctober { get; set; } = [];
-
-        public int TotalAmountForNovember { get; set; }
-        public double TotalCostForNovember { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForNovember { get; set; } = [];
-        
-        public int TotalAmountForDecember { get; set; }
-        public double TotalCostForDecember { get; set; }
-        public ObservableCollection<SalesByMonth> ListSaleForDecember { get; set; } = [];
+        public ObservableCollection<SalesByMonth>[] ListAllSalesByMonths { get; set; } = new ObservableCollection<SalesByMonth>[12];
 
         /// <summary>
-        /// Общее стоимость продаж за год
+        /// Массив из 12 общих стоимостей продаж за каждый месяц
+        /// </summary>
+        public double[] ArrAllTotalCosts { get; set; } = new double[12];
+
+        /// <summary>
+        /// Массив из 12 общих кол-в продаж за каждый месяц
+        /// </summary>
+        public int[] ArrAllTotalAmounts { get; set; } = new int[12];
+
+        /// <summary>
+        /// Общая стоимость продаж за год
         /// </summary>
         public double TotalCostForYear { get; set; }
 
@@ -78,17 +36,11 @@ namespace SalesAnalysis.Models
         public SalesByYear(Model model)
             : base(model.IdModel, model.NameModel, model.PriceModel)
         {
-
+            for (int i = 0; i < 12; i++)
+            {
+                ListAllSalesByMonths[i] = new ObservableCollection<SalesByMonth>();
+            }
         }
 
-        //public static explicit operator SalesModel(Model model)
-        //{
-        //    return new SalesModel(newIdModel: model.IdModel,
-        //                          newNameModel: model.NameModel,
-        //                          newPriceModel: model.PriceModel)
-        //    {
-
-        //    };
-        //}
     }
 }

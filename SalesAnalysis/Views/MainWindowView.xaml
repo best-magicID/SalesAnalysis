@@ -130,7 +130,7 @@
         
         <DataGrid Grid.Row="2"
                   Grid.Column="2"
-                  ItemsSource="{Binding ListSalesModels}"
+                  ItemsSource="{Binding ListSalesByYears}"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   AutoGenerateColumns="False"
@@ -148,12 +148,12 @@
                                     IsReadOnly="True"/>
                 
                 <DataGridTextColumn Header="Январь" 
-                                    Binding="{Binding Path=TotalCostForJanuary}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[0]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Февраль" 
-                                    Binding="{Binding Path=TotalCostForFebruary}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[1]}"
                                     Width="*" 
                                     IsReadOnly="True" >
                     <!--<DataGridTextColumn.CellStyle>
@@ -166,52 +166,52 @@
                 </DataGridTextColumn>
 
                 <DataGridTextColumn Header="Март" 
-                                    Binding="{Binding Path=TotalCostForMarch}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[2]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Апрель" 
-                                    Binding="{Binding Path=TotalCostForApril}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[3]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Май" 
-                                    Binding="{Binding Path=TotalCostForMay}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[4]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Июнь" 
-                                    Binding="{Binding Path=TotalCostForJune}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[5]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Июль" 
-                                    Binding="{Binding Path=TotalCostForJuly}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[6]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Август" 
-                                    Binding="{Binding Path=TotalCostForAugust}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[7]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Сентябрь" 
-                                    Binding="{Binding Path=TotalCostForSeptember}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[8]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Октябрь" 
-                                    Binding="{Binding Path=TotalCostForOctober}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[9]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Ноябрь" 
-                                    Binding="{Binding Path=TotalCostForNovember}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[10]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 
                 <DataGridTextColumn Header="Декабрь" 
-                                    Binding="{Binding Path=TotalCostForDecember}"
+                                    Binding="{Binding Path=ArrAllTotalCosts[11]}"
                                     Width="*" 
                                     IsReadOnly="True"/>
 

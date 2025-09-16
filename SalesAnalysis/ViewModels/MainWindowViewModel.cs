@@ -59,7 +59,7 @@ namespace SalesAnalysis.ViewModels
         /// <summary>
         /// Лист проданных моделей, на основе его отображается основная таблица с моделями
         /// </summary>
-        public ObservableCollection<SalesByYear> ListSalesModels { get; set; } = [];
+        public ObservableCollection<SalesByYear> ListSalesByYears { get; set; } = [];
 
         /// <summary>
         /// Список лет за которые продавались модели
@@ -298,26 +298,26 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         public void ConvertDataFromBD()
         {
-            ListSalesModels.Clear();
+            ListSalesByYears.Clear();
 
             foreach (Model model in ListModels)
             {
                 if (SelectedModel == null) // Добавление всех моделей в список
                 {
-                    ListSalesModels.Add(new SalesByYear(model));
+                    ListSalesByYears.Add(new SalesByYear(model));
                 }
                 else if (SelectedModel.IdModel == model.IdModel)
                 {
-                    ListSalesModels.Add(new SalesByYear(model));
+                    ListSalesByYears.Add(new SalesByYear(model));
                     break;
                 }
             }
 
-            foreach (SalesByYear salesModel in ListSalesModels)
+            foreach (SalesByYear salesByYear in ListSalesByYears)
             {
                 foreach (DateSalesModel dateSalesModel in ListAllDatesSalesModels)
                 {
-                    if (salesModel.IdModel == dateSalesModel.IdModel)
+                    if (salesByYear.IdModel == dateSalesModel.IdModel)
                     {
                         var numberMonth = dateSalesModel.DateSaleModel.Month;
 
@@ -327,110 +327,31 @@ namespace SalesAnalysis.ViewModels
                                                                      newMonth: ListMonths.Single(month => (int)month == numberMonth),
                                                                      newDateSalesModels: dateSalesModel);
 
-                        AddInListDateSaleAndCalculatingSums(numberMonth, salesModel, salesByMonth, dateSalesModel);
+                        AddInListDateSale(numberMonth, salesByYear, salesByMonth, dateSalesModel);
                     }
                 }
+                salesByYear.TotalAmountForYear = salesByYear.ArrAllTotalAmounts.Sum();
+                salesByYear.TotalCostForYear = salesByYear.ArrAllTotalCosts.Sum();
             }
         }
 
         /// <summary>
-        /// Добавление в лист дат продаж и подсчет годовой суммы
+        /// Добавление дат продаж в "Список продаж за год"
         /// </summary>
         /// <param name="numberMonth"></param>
-        /// <param name="salesModel"></param>
+        /// <param name="salesByYear"></param>
         /// <param name="salesByMonth"></param>
         /// <param name="dateSalesModel"></param>
-        public void AddInListDateSaleAndCalculatingSums(int numberMonth, SalesByYear salesModel, SalesByMonth salesByMonth, DateSalesModel dateSalesModel)
+        public void AddInListDateSale(int numberMonth, SalesByYear salesByYear, SalesByMonth salesByMonth, DateSalesModel dateSalesModel)
         {
-            switch (numberMonth)
+            int month = numberMonth - 1;
+            if (month >= 0 && month < 12)
             {
-                case 1:
-                    salesModel.ListSaleForJanuary.Add(salesByMonth);
-                    salesModel.TotalCostForJanuary = salesModel.TotalCostForJanuary + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForJanuary = salesModel.TotalAmountForJanuary + dateSalesModel.CountSoldModels;
-                    break;
-                case 2:
-                    salesModel.ListSaleForFebruary.Add(salesByMonth);
-                    salesModel.TotalCostForFebruary = salesModel.TotalCostForFebruary + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForFebruary = salesModel.TotalAmountForFebruary + dateSalesModel.CountSoldModels;
-                    break;
-                case 3:
-                    salesModel.ListSaleForMarch.Add(salesByMonth);
-                    salesModel.TotalCostForMarch = salesModel.TotalCostForMarch + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForMarch = salesModel.TotalAmountForMarch + dateSalesModel.CountSoldModels;
-                    break;
-                case 4:
-                    salesModel.ListSaleForApril.Add(salesByMonth);
-                    salesModel.TotalCostForApril = salesModel.TotalCostForApril + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForApril = salesModel.TotalAmountForApril + dateSalesModel.CountSoldModels;
-                    break;
-                case 5:
-                    salesModel.ListSaleForMay.Add(salesByMonth);
-                    salesModel.TotalCostForMay = salesModel.TotalCostForMay + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForMay = salesModel.TotalAmountForMay + dateSalesModel.CountSoldModels;
-                    break;
-                case 6:
-                    salesModel.ListSaleForJune.Add(salesByMonth);
-                    salesModel.TotalCostForJune = salesModel.TotalCostForJune + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForJune = salesModel.TotalAmountForJune + dateSalesModel.CountSoldModels;
-                    break;
-                case 7:
-                    salesModel.ListSaleForJuly.Add(salesByMonth);
-                    salesModel.TotalCostForJuly = salesModel.TotalCostForJuly + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForJuly = salesModel.TotalAmountForJuly + dateSalesModel.CountSoldModels;
-                    break;
-                case 8:
-                    salesModel.ListSaleForAugust.Add(salesByMonth);
-                    salesModel.TotalCostForAugust = salesModel.TotalCostForAugust + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForAugust = salesModel.TotalAmountForAugust + dateSalesModel.CountSoldModels;
-                    break;
-                case 9:
-                    salesModel.ListSaleForSeptember.Add(salesByMonth);
-                    salesModel.TotalCostForSeptember = salesModel.TotalCostForSeptember + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForSeptember = salesModel.TotalAmountForSeptember + dateSalesModel.CountSoldModels;
-                    break;
-                case 10:
-                    salesModel.ListSaleForOctober.Add(salesByMonth);
-                    salesModel.TotalCostForOctober = salesModel.TotalCostForOctober + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForOctober = salesModel.TotalAmountForOctober + dateSalesModel.CountSoldModels;
-                    break;
-                case 11:
-                    salesModel.ListSaleForNovember.Add(salesByMonth);
-                    salesModel.TotalCostForNovember = salesModel.TotalCostForNovember + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForNovember = salesModel.TotalAmountForNovember + dateSalesModel.CountSoldModels;
-                    break;
-                case 12:
-                    salesModel.ListSaleForDecember.Add(salesByMonth);
-                    salesModel.TotalCostForDecember = salesModel.TotalCostForDecember + dateSalesModel.CostAllModelsSold;
-                    salesModel.TotalAmountForDecember = salesModel.TotalAmountForDecember + dateSalesModel.CountSoldModels;
-                    break;
+                salesByYear.ListAllSalesByMonths[month].Add(salesByMonth);
+
+                salesByYear.ArrAllTotalCosts[month] += dateSalesModel.CostAllModelsSold;
+                salesByYear.ArrAllTotalAmounts[month] += dateSalesModel.CountSoldModels;
             }
-
-            salesModel.TotalCostForYear = salesModel.TotalCostForJanuary +
-                                          salesModel.TotalCostForFebruary +
-                                          salesModel.TotalCostForMarch +
-                                          salesModel.TotalCostForApril +
-                                          salesModel.TotalCostForMay +
-                                          salesModel.TotalCostForJune +
-                                          salesModel.TotalCostForJuly +
-                                          salesModel.TotalCostForAugust +
-                                          salesModel.TotalCostForSeptember +
-                                          salesModel.TotalCostForOctober +
-                                          salesModel.TotalCostForNovember +
-                                          salesModel.TotalCostForDecember;
-
-            salesModel.TotalAmountForYear = salesModel.TotalAmountForJanuary +
-                                            salesModel.TotalAmountForFebruary +
-                                            salesModel.TotalAmountForMarch +
-                                            salesModel.TotalAmountForApril +
-                                            salesModel.TotalAmountForMay +
-                                            salesModel.TotalAmountForJune +
-                                            salesModel.TotalAmountForJuly +
-                                            salesModel.TotalAmountForAugust +
-                                            salesModel.TotalAmountForSeptember +
-                                            salesModel.TotalAmountForOctober +
-                                            salesModel.TotalAmountForNovember +
-                                            salesModel.TotalAmountForDecember;
         }
 
         /// <summary>
@@ -465,7 +386,7 @@ namespace SalesAnalysis.ViewModels
         /// </summary>
         private void SaveToExcelCommand_Execute(object parameter)
         {
-            SaveToExcel(ListSalesModels);
+            SaveToExcel(ListSalesByYears);
         }
 
         /// <summary>
