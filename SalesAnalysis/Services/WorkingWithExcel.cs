@@ -103,50 +103,28 @@ namespace SalesAnalysis.Services
         /// <returns></returns>
         public Row CreateRowHeader(int indexRow)
         {
-            Row row = new Row() { RowIndex = Convert.ToUInt32(indexRow) };
+            Row row = new Row() { RowIndex = (uint)indexRow };
 
             row.AppendChild(CreateCell("A", row, "Порядковый номер", CellValues.String));
             row.AppendChild(CreateCell("B", row, "Id", CellValues.String));
             row.AppendChild(CreateCell("C", row, "Название", CellValues.String));
 
-            row.AppendChild(CreateCell("D", row, "Январь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("E", row, "Январь (общая стоимость)", CellValues.String));
+            string[] months =
+            {
+                "Январь","Февраль","Март","Апрель","Май","Июнь",
+                "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь", "Год"
+            };
 
-            row.AppendChild(CreateCell("F", row, "Февраль (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("G", row, "Февраль (общая стоимость)", CellValues.String));
+            int columnIndex = 4; // Начинаем с D
 
-            row.AppendChild(CreateCell("H", row, "Март (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("I", row, "Март (общая стоимость)", CellValues.String));
+            foreach (var month in months)
+            {
+                string colCount = GetExcelColumnName(columnIndex++);
+                string colCost = GetExcelColumnName(columnIndex++);
 
-            row.AppendChild(CreateCell("J", row, "Апрель (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("K", row, "Апрель (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("L", row, "Май (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("M", row, "Май (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("N", row, "Июнь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("O", row, "Июнь (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("P", row, "Июль (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("Q", row, "Июль (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("R", row, "Август (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("S", row, "Август (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("T", row, "Сентябрь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("U", row, "Сентябрь (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("V", row, "Октябрь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("W", row, "Октябрь (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("X", row, "Ноябрь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("Y", row, "Ноябрь (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("Z", row, "Декабрь (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("AA", row, "Декабрь (общая стоимость)", CellValues.String));
-
-            row.AppendChild(CreateCell("AB", row, "Год (Кол-во)", CellValues.String));
-            row.AppendChild(CreateCell("AC", row, "Год (общая стоимость)", CellValues.String));
+                row.AppendChild(CreateCell(colCount, row, $"{month} (Кол-во)", CellValues.String));
+                row.AppendChild(CreateCell(colCost, row, $"{month} (Общая стоимость)", CellValues.String));
+            }
 
             return row;
         }
@@ -159,54 +137,48 @@ namespace SalesAnalysis.Services
         /// <returns></returns>
         public Row CreateRow(int indexRow, SalesByYear salesModel)
         {
-            Row row = new Row() { RowIndex = Convert.ToUInt32(indexRow) };
+            Row row = new Row() { RowIndex = (uint)indexRow };
 
             row.AppendChild(CreateCell("A", row, (indexRow - 1).ToString(), CellValues.Number));
             row.AppendChild(CreateCell("B", row, salesModel.IdModel.ToString(), CellValues.Number));
             row.AppendChild(CreateCell("C", row, salesModel.NameModel, CellValues.String));
 
-            row.AppendChild(CreateCell("D", row, salesModel.ArrAllTotalAmounts[0].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("E", row, salesModel.ArrAllTotalCosts[0].ToString(), CellValues.Number));
+            int colIndex = 4;
 
-            row.AppendChild(CreateCell("F", row, salesModel.ArrAllTotalAmounts[1].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("G", row, salesModel.ArrAllTotalCosts[1].ToString(), CellValues.Number));
+            for (int i = 0; i < 12; i++)
+            {
+                string colCount = GetExcelColumnName(colIndex++);
+                string colCost = GetExcelColumnName(colIndex++);
 
-            row.AppendChild(CreateCell("H", row, salesModel.ArrAllTotalAmounts[2].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("I", row, salesModel.ArrAllTotalCosts[2].ToString(), CellValues.Number));
+                row.AppendChild(CreateCell(colCount, row, salesModel.ArrAllTotalAmounts[i].ToString(), CellValues.Number));
+                row.AppendChild(CreateCell(colCost, row, salesModel.ArrAllTotalCosts[i].ToString(), CellValues.Number));
+            }
 
-            row.AppendChild(CreateCell("J", row, salesModel.ArrAllTotalAmounts[3].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("K", row, salesModel.ArrAllTotalCosts[3].ToString(), CellValues.Number));
+            string totalCountCol = GetExcelColumnName(colIndex++);
+            string totalCostCol = GetExcelColumnName(colIndex++);
 
-            row.AppendChild(CreateCell("L", row, salesModel.ArrAllTotalAmounts[4].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("M", row, salesModel.ArrAllTotalCosts[4].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("N", row, salesModel.ArrAllTotalAmounts[5].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("O", row, salesModel.ArrAllTotalCosts[5].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("P", row, salesModel.ArrAllTotalAmounts[6].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("Q", row, salesModel.ArrAllTotalCosts[6].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("R", row, salesModel.ArrAllTotalAmounts[7].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("S", row, salesModel.ArrAllTotalCosts[7].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("T", row, salesModel.ArrAllTotalAmounts[8].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("U", row, salesModel.ArrAllTotalCosts[8].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("V", row, salesModel.ArrAllTotalAmounts[9].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("W", row, salesModel.ArrAllTotalCosts[9].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("X", row, salesModel.ArrAllTotalAmounts[10].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("Y", row, salesModel.ArrAllTotalCosts[10].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("Z", row, salesModel.ArrAllTotalAmounts[11].ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("AA", row, salesModel.ArrAllTotalCosts[11].ToString(), CellValues.Number));
-
-            row.AppendChild(CreateCell("AB", row, salesModel.TotalAmountForYear.ToString(), CellValues.Number));
-            row.AppendChild(CreateCell("AC", row, salesModel.TotalCostForYear.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell(totalCountCol, row, salesModel.TotalAmountForYear.ToString(), CellValues.Number));
+            row.AppendChild(CreateCell(totalCostCol, row, salesModel.TotalCostForYear.ToString(), CellValues.Number));
 
             return row;
         }
 
+        /// <summary>
+        /// Получение номера столбца в Excel по его индексу
+        /// </summary>
+        /// <param name="columnNumber"></param>
+        /// <returns></returns>
+        private string GetExcelColumnName(int columnNumber)
+        {
+            string columnName = string.Empty;
+            while (columnNumber > 0)
+            {
+                int modulo = (columnNumber - 1) % 26;
+                columnName = Convert.ToChar('A' + modulo) + columnName;
+                columnNumber = (columnNumber - modulo) / 26;
+            }
+            return columnName;
+        }
 
         /// <summary>
         /// Создание стилей для ячеек
