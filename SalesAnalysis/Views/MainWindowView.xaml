@@ -22,13 +22,7 @@
                     Value="105" />
         </Style>
         
-        <!--<conv:ValueToBrushConverter x:Key="ValueToBrushConverter"/>-->
-        
-        <!--<Style x:Key="CellStyle" 
-               TargetType="DataGridCell">
-            <Setter Property="Background" 
-                    Value="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ValueToBrushConverter}}" />
-        </Style>-->
+        <conv:ValueToBrushConverter x:Key="ValueToBrushConverter"/>
 
     </Window.Resources>
 
@@ -126,190 +120,181 @@
                 <TextBlock Text="{Binding SelectedYear}"
                            VerticalAlignment="Bottom"/>
             </StackPanel>
-        
-        
-        <DataGrid Grid.Row="2"
-                  Grid.Column="2"
-                  ItemsSource="{Binding ListSalesByYears}"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  AutoGenerateColumns="False"
-                  CanUserSortColumns="False"
-                  DockPanel.Dock="Bottom">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="№ " 
+
+
+            <DataGrid Grid.Row="2"
+                      Grid.Column="2"
+                      ItemsSource="{Binding ListSalesByYears}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      AutoGenerateColumns="False"
+                      CanUserSortColumns="False"
+                      DockPanel.Dock="Bottom">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="№ " 
                                     Binding="{Binding Path=IdModel}"
                                     Width="Auto" 
                                     IsReadOnly="True"/>
 
-                <DataGridTextColumn Header="Название модели" 
+                    <DataGridTextColumn Header="Название модели" 
                                     Binding="{Binding Path=NameModel}"
                                     Width="Auto" 
                                     IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Январь" 
+
+                    <DataGridTextColumn Header="Январь" 
                                     Binding="{Binding Path=ArrAllTotalCosts[0]}"
                                     Width="*" 
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[0], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Февраль" 
+
+                    <DataGridTextColumn Header="Февраль" 
                                     Binding="{Binding Path=ArrAllTotalCosts[1]}"
                                     Width="*" 
                                     IsReadOnly="True" >
-                    <!--<DataGridTextColumn.CellStyle>
-                        <Style>
-                            <Setter Property="Control.Background" 
-                                    Value="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ValueToBrushConverter}}" />
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[1], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                        </Style>
-                    </DataGridTextColumn.CellStyle>-->
-                </DataGridTextColumn>
-
-                <DataGridTextColumn Header="Март" 
+                    <DataGridTextColumn Header="Март" 
                                     Binding="{Binding Path=ArrAllTotalCosts[2]}"
                                     Width="*" 
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[2], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Апрель" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[3]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Апрель" 
+                                Binding="{Binding Path=ArrAllTotalCosts[3]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[3], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Май" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[4]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Май" 
+                                Binding="{Binding Path=ArrAllTotalCosts[4]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[4], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Июнь" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[5]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Июнь" 
+                                Binding="{Binding Path=ArrAllTotalCosts[5]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[5], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Июль" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[6]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Июль" 
+                                Binding="{Binding Path=ArrAllTotalCosts[6]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[6], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Август" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[7]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Август" 
+                                Binding="{Binding Path=ArrAllTotalCosts[7]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[7], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Сентябрь" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[8]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Сентябрь" 
+                                Binding="{Binding Path=ArrAllTotalCosts[8]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[8], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Октябрь" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[9]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Октябрь" 
+                                Binding="{Binding Path=ArrAllTotalCosts[9]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[9], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Ноябрь" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[10]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Ноябрь" 
+                                Binding="{Binding Path=ArrAllTotalCosts[10]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[10], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Декабрь" 
-                                    Binding="{Binding Path=ArrAllTotalCosts[11]}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Декабрь" 
+                                Binding="{Binding Path=ArrAllTotalCosts[11]}"
+                                Width="*" 
+                                IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" 
+                                        Value="{Binding ArrAllTotalCosts[11], Converter={StaticResource ValueToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Год" 
-                                    Binding="{Binding Path=TotalCostForYear}"
-                                    Width="*" 
-                                    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Год" 
+                                Binding="{Binding Path=TotalCostForYear}"
+                                Width="*" 
+                                IsReadOnly="True"/>
 
-            </DataGrid.Columns>
+                </DataGrid.Columns>
 
-            
-            
-            <!--Тестовое доп поле-->
-            <!--<DataGrid.RowDetailsTemplate>
-                <DataTemplate>
-                    <DataGrid HeadersVisibility="None"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              
-                              HorizontalAlignment="Right"
-                              ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=ListSalesModels}">
-                        
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Январь" 
-                    Binding="{Binding ListSaleForJanuary.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
 
-                            <DataGridTextColumn Header="Февраль" 
-                    Binding="{Binding Path=ListSaleForFebruary.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Март" 
-                    Binding="{Binding Path=ListSaleForMarch.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Апрель" 
-                    Binding="{Binding Path=ListSaleForApril.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Май" 
-                    Binding="{Binding Path=ListSaleForMay.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Июнь" 
-                    Binding="{Binding Path=ListSaleForJune.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Июль" 
-                    Binding="{Binding Path=ListSaleForJuly.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Август" 
-                    Binding="{Binding Path=ListSaleForAugust.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Сентябрь" 
-                    Binding="{Binding Path=ListSaleForSeptember.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Октябрь" 
-                    Binding="{Binding Path=ListSaleForOctober.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Ноябрь" 
-                    Binding="{Binding Path=ListSaleForNovember.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-
-                            <DataGridTextColumn Header="Декабрь" 
-                    Binding="{Binding Path=ListSaleForDecember.Count}"
-                    Width="*" 
-                    IsReadOnly="True"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </DataTemplate>
-            </DataGrid.RowDetailsTemplate>-->
-
-        </DataGrid>
-
-        <!--<StackPanel Grid.Column="2"
-                    Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right">
-            
-            <Button Content="Кнопка"/>
-            
-        </StackPanel>-->
+            </DataGrid>
         </DockPanel>
 
     </Grid>
